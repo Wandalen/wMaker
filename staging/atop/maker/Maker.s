@@ -44,6 +44,16 @@ if( typeof module !== 'undefined' )
     require( 'wTemplateTree' );
   }
 
+  if( typeof wLogger === 'undefined' )
+  try
+  {
+    require( '../include/abase/object/printer/printer/Logger.s' );
+  }
+  catch( err )
+  {
+    require( 'wLogger' );
+  }
+
 }
 
 var _ = wTools;
@@ -299,7 +309,8 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
   if( file.upToDate !== undefined )
   {
     var result = file.upToDate;
-    logger.log( '!targetInvestigateUpToDateFile',dst,result );
+    debugger;
+    logger.log( '! targetInvestigateUpToDateFile',dst,':',result );
     return result;
   }
 
@@ -313,7 +324,7 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
 
   if( self.usingLogging )
   if( !result )
-  logger.log( 'targetInvestigateUpToDateFile(',dst,') :',result );
+  logger.log( 'targetInvestigateUpToDateFile',dst,':',result );
   // logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
 
   return result;
