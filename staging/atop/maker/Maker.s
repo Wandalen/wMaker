@@ -75,8 +75,6 @@ var make = function make()
   if( !self.env.opt )
   throw _.err( 'Maker expects ( env.opt )' );
 
-  debugger;
-
   /* */
 
   if( !self.currentPath )
@@ -133,6 +131,7 @@ var _makeTargetAct = function _makeTargetAct( target )
   if( _.strIs( target ) )
   target = self.env.target[ target ];
 
+  debugger;
   if( self.usingLogging )
   logger.logUp( 'making target',target.name );
 
@@ -161,7 +160,10 @@ var _makeTargetAct = function _makeTargetAct( target )
     }
     else if( dep.kind === 'file' )
     {
-      //logger.log( 'file',dep.filePath );
+      debugger;
+      // logger.log( 'file',dep.filePath,self.pathesFor( dep.filePath ) );
+      if( !self.fileProvider.fileStat( self.pathesFor( dep.filePath )[ 0 ] ) )
+      throw _.err( 'not made :',dep.filePath );
     }
     else throw _.err( 'unknown target kind',target.kind );
 
@@ -206,12 +208,7 @@ var targetsAdjust = function targetsAdjust()
 
   }
 
-  debugger;
   self.templateTree.tree = self.env;
-  // var x = self.templateTree.query( '' );
-  // var y = self.templateTree.query( '/' );
-  // var z = self.templateTree.tree = self.env = self.templateTree.resolve( self.env );
-  debugger;
   self.env = self.templateTree.assignAndResolve( self.env );
   debugger;
 
@@ -314,8 +311,10 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
 
   var result = self.fileProvider.filesIsUpToDate( dst,src );
 
+  if( self.usingLogging )
   if( !result )
-  logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
+  logger.log( 'targetInvestigateUpToDateFile(',dst,') :',result );
+  // logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
 
   return result;
 }
@@ -331,17 +330,20 @@ var pathesFor = function pathesFor( pathes )
   _.assert( arguments.length === 1 );
   _.assert( _.arrayIs( pathes ) || _.strIs( pathes ) );
 
+  // console.log( 'pathes',pathes );
+  // debugger;
+
   if( _.arrayIs( pathes ) )
   {
     var result = [];
     for( var p = 0 ; p < pathes.length ; p++ )
-    result[ p ] = pathesFor( pathes[ p ] );
+    result[ p ] = self.pathesFor( pathes[ p ] )[ 0 ];
     return result;
   }
 
   var result = _.pathJoin( self.currentPath,pathes );
 
-  return result;
+  return [ result ];
 }
 
 // --

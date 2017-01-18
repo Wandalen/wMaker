@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "wTools": "",
-    "wTemplateTree": ""
+    "wTemplateTree": "",
+    "wLogger": ""
   },
   "devDependencies": {
     "wTesting": ""
