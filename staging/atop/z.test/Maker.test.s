@@ -53,9 +53,6 @@ var exe = process.platform === `win32` ? `.exe` : ``;
 
 var simplest = function( test )
 {
-
-  test.description = 'simple make';
-
   var opt =
   {
     basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
@@ -82,10 +79,49 @@ var simplest = function( test )
     target : target,
   };
 
-  wMaker( o ).make();
+  var con = new wConsequence().give();
 
-  test.identical( 1,1 );
+  con.ifNoErrorThen(function()
+  {
+    test.description = 'simple make';
+    var con = wMaker( o ).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen(function()
+  {
+    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    test.identical( got,true );
+  })
+  .ifNoErrorThen(function()
+  {
+    test.description = "try to make obj file ";
 
+    var target =
+    [
+      {
+        name : 'test4',
+        after : `{{opt/basePath}}/out/test2.o`,
+        before : [ `{{opt/basePath}}/test2.cpp` ],
+        shell : `g++ -c {{opt/basePath}}/test2.cpp -o {{opt/basePath}}/out/test2.o`,
+      }
+    ];
+
+    var o =
+    {
+      opt : opt,
+      target : target,
+    };
+
+    var con = wMaker( o ).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen(function()
+  {
+    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
+    test.identical( got,true );
+  });
+
+  return con;
 }
 
 //
@@ -106,13 +142,13 @@ var targetInvestigateUpToDate = function( test )
     }
   ];
 
-  test.description = "compare two indentical files"
+  test.description = "compare two indentical files";
   var maker = createMaker( opt, target );
   var t = maker.env.tree.target[ 'test2' ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, true );
 
-  test.description = "compare src with output"
+  test.description = "compare src with output";
   var target =
   [
     {
