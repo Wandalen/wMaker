@@ -55,9 +55,9 @@ var simplest = function( test )
 
   var opt =
   {
-    outPath : './staging/atop/z.test/file/out',
-    outExe : './staging/atop/z.test/file/out/test1',
-    src : './staging/atop/z.test/file/test1.cpp',
+    outPath : '../../../file/out',
+    outExe : '../../../file/out/test1',
+    src : '../../../file/test1.cpp',
 
   };
 
@@ -66,7 +66,7 @@ var simplest = function( test )
     {
       name : 'test1',
       after : '{{opt/outExe}}',
-      before : [ './file/test1.cpp' ],
+      before : [ '{{opt/src}}' ],
       shell : `g++ {{opt/src}} -o {{opt/outExe}}`,
       pre : pre
     }
@@ -127,7 +127,7 @@ var Proto =
   {
 
     simplest : simplest,
-    targetInvestigateUpToDate : targetInvestigateUpToDate
+    // targetInvestigateUpToDate : targetInvestigateUpToDate
 
   },
 
