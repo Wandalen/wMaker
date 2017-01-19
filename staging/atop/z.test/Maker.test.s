@@ -39,6 +39,8 @@ var pre = function pre()
 
 var createMaker = function( opt, target )
 {
+  opt = opt ? opt : {};
+  target = target ? target : [];
   var maker = wMaker({ opt : opt, target : target });
   maker.currentPath = _.pathMainDir();
   maker.fileProvider = fileProvider;
@@ -126,6 +128,48 @@ var simplest = function( test )
 
 //
 
+var targetsAdjust = function( test )
+{
+  test.description = "check targets dependencies";
+  var target =
+  [
+    {
+      name : 'first',
+      after : `a1`,
+      before : [ 'a.cpp' ],
+    },
+    {
+      name : 'second',
+      after : [ 'a2' ],
+      before : [ 'first','a2.cpp' ],
+    }
+  ];
+
+  var maker = createMaker( { }, target );
+  target = maker.env.tree.target;
+  var got = [ target.first.beforeNodes, target.second.beforeNodes ];
+  var expected =
+  [
+    { 'a.cpp' : { kind : 'file', filePath : 'a.cpp' } },
+    {
+      'first' :
+      {
+        kind : 'recipe',
+        name : 'first',
+        before : [ 'a.cpp' ],
+        after : [ 'a1' ],
+        beforeNodes : { 'a.cpp' : { kind : 'file', filePath : 'a.cpp' } }
+      },
+      'a2.cpp' : { kind : 'file', filePath : 'a2.cpp' }
+    }
+  ];
+
+  test.identical( got, expected );
+
+}
+
+//
+
 var targetInvestigateUpToDate = function( test )
 {
   var opt =
@@ -163,6 +207,24 @@ var targetInvestigateUpToDate = function( test )
   test.identical( got, false );
 }
 
+//
+
+var pathesFor = function( test )
+{
+  test.description = "check if relative pathes are generated correctly";
+  var maker = createMaker( {}, {} );
+  var got = maker.pathesFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
+  var expected =
+  [
+    _.pathJoin( _.pathMainDir(), '../../../file' ),
+    _.pathJoin( _.pathMainDir(), '../../../file/test1.cpp' ),
+    _.pathJoin( _.pathMainDir(), '../../../test2.cpp' ),
+  ];
+
+  test.identical( got, expected );
+}
+
+
 var Proto =
 {
 
@@ -172,7 +234,11 @@ var Proto =
   {
 
     simplest : simplest,
-    targetInvestigateUpToDate : targetInvestigateUpToDate
+    targetsAdjust : targetsAdjust,
+    targetInvestigateUpToDate : targetInvestigateUpToDate,
+
+    //etc
+    pathesFor : pathesFor,
 
   },
 
