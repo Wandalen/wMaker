@@ -25,18 +25,32 @@ var _ = wTools;
 var Parent = wTools.Testing;
 var Self = {};
 var fileProvider = _.FileProvider.HardDrive()
+
 //
 
+var pre = function pre()
+{
+  var outPath = this.env.query( 'opt/outPath' );
+  logger.log( 'outPath',outPath );
+  fileProvider.directoryMake( outPath );
+};
+
+//
+
+var createMaker = function( opt, target )
+{
+  var maker = wMaker({ opt : opt, target : target });
+  maker.currentPath = _.pathMainDir();
+  maker.fileProvider = fileProvider;
+  maker.env = wTemplateTree({ tree : { opt : maker.opt, target : maker.target } });
+  maker.targetsAdjust();
+  return maker;
+}
+
+//
 
 var simplest = function( test )
 {
-  var pre = function pre()
-  {
-    var outPath = this.env.query( 'opt/outPath' );
-    logger.log( 'outPath',outPath );
-    fileProvider.directoryMake( outPath );
-  };
-
   test.description = 'simple make';
 
   var opt =
@@ -70,9 +84,39 @@ var simplest = function( test )
 
 }
 
-
-
 //
+
+var targetInvestigateUpToDate = function( test )
+{
+  var target =
+  [
+    {
+      name : 'test1',
+      after : './file/test1.cpp',
+      before : [ './file/test1.cpp' ],
+    }
+  ];
+
+  test.description = "compare two indentical files"
+  var maker = createMaker( {}, target );
+  var t = maker.env.tree.target[ target[ 0 ].name ];
+  var got = maker.targetInvestigateUpToDate( t );
+  test.identical( got, true );
+
+  test.description = "compare src with output"
+  var target =
+  [
+    {
+      name : 'test1',
+      after : './file/out/test1.o',
+      before : [ './file/test1.cpp' ],
+    }
+  ];
+  var maker = createMaker( {}, target );
+  var t = maker.env.tree.target[ target[ 0 ].name ];
+  var got = maker.targetInvestigateUpToDate( t );
+  test.identical( got, false );
+}
 
 var Proto =
 {
@@ -83,6 +127,7 @@ var Proto =
   {
 
     simplest : simplest,
+    targetInvestigateUpToDate : targetInvestigateUpToDate
 
   },
 
