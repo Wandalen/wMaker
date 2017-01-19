@@ -184,12 +184,29 @@ var _makeTarget = function _makeTarget( target )
     return target.post.call( self,target );
   });
 
+  /* validation */
+
+  con.ifNoErrorThen( function()
+  {
+
+    var pathes = self.pathesFor( target.after );
+    for( var a = 0 ; a < target.after.length ; a++ )
+    {
+      logger.log( 'checking',pathes[ a ] );
+      if( !self.fileProvider.fileStat( pathes[ a ] ) )
+      throw _.err( 'Target',target.name,'failed to produce',pathes[ a ] );
+    }
+
+  });
+
   /* end */
 
   con.thenDo( function( err,data )
   {
+
     if( self.usingLogging )
     logger.logDown( '' );
+
     if( err )
     throw _.errLogOnce( err );
   });
@@ -233,15 +250,20 @@ var _makeTargetDependencies = function _makeTargetDependencies( target,con )
 
 var _targetName = function _targetName( target )
 {
+  var result;
 
   if( target.name !== undefined )
-  return target.name;
+  result = target.name;
   else if( _.strIs( target.after ) )
-  return target.after;
+  result = target.after;
   else if( _.arrayIs( target.target ) )
-  return target.after.join( ',' );
+  result = target.after.join( ',' );
   else throw _.err( 'no name for target',target );
 
+  if( !_.strIsNotEmpty( result ) )
+  throw _.err( 'no name for target',target );
+
+  return result;
 }
 
 //
@@ -332,7 +354,6 @@ var targetAdjust = function targetAdjust( target )
 
   /* */
 
-  if( _.strIs( target.after ) )
   target.after = _.arrayAs( target.after );
   target.before = _.arrayFlatten( target.before );
   target.beforeNodes = {};
