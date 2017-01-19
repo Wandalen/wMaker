@@ -92,18 +92,23 @@ var simplest = function( test )
 
 var targetInvestigateUpToDate = function( test )
 {
+  var opt =
+  {
+    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+  };
+
   var target =
   [
     {
-      name : 'test1',
-      after : './file/test1.cpp',
-      before : [ './file/test1.cpp' ],
+      name : 'test2',
+      after : `{{opt/basePath}}`,
+      before : [ `{{opt/basePath}}` ],
     }
   ];
 
   test.description = "compare two indentical files"
-  var maker = createMaker( {}, target );
-  var t = maker.env.tree.target[ target[ 0 ].name ];
+  var maker = createMaker( opt, target );
+  var t = maker.env.tree.target[ 'test2' ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, true );
 
@@ -111,12 +116,12 @@ var targetInvestigateUpToDate = function( test )
   var target =
   [
     {
-      name : 'test1',
-      after : './file/out/test1.o',
-      before : [ './file/test1.cpp' ],
+      name : 'test3',
+      after : `{{opt/basePath}}/1.o`,
+      before : [ `{{opt/basePath}}` ],
     }
   ];
-  var maker = createMaker( {}, target );
+  var maker = createMaker( opt, target );
   var t = maker.env.tree.target[ target[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, false );
@@ -131,7 +136,7 @@ var Proto =
   {
 
     simplest : simplest,
-    // targetInvestigateUpToDate : targetInvestigateUpToDate
+    targetInvestigateUpToDate : targetInvestigateUpToDate
 
   },
 
