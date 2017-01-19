@@ -103,7 +103,7 @@ var make = function make()
 
   var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
 
-  self.makeTarget( nameOfTarget );
+  return self.makeTarget( nameOfTarget );
 
 }
 
@@ -128,10 +128,10 @@ var makeTarget = function makeTarget( target )
   if( self.targetInvestigateUpToDate( target ) )
   {
     logger.log( 'Recipe',target.name,'is up to date' );
-    return;
+    return con.give();
   }
 
-  self._makeTarget( target );
+  return self._makeTarget( target );
 
 }
 
