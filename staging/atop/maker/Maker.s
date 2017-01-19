@@ -78,12 +78,10 @@ var make = function make()
 
   _.assert( arguments.length === 0 );
 
-  if( !self.env )
-  throw _.err( 'Maker expects ( env )' );
-  if( !self.env.target )
-  throw _.err( 'Maker expects ( env.target )' );
-  if( !self.env.opt )
-  throw _.err( 'Maker expects ( env.opt )' );
+  if( !self.target )
+  throw _.err( 'Maker expects ( target )' );
+  if( !self.opt )
+  throw _.err( 'Maker expects ( opt )' );
 
   /* */
 
@@ -93,8 +91,8 @@ var make = function make()
   if( !self.fileProvider )
   self.fileProvider = _.FileProvider.HardDrive();
 
-  if( !self.templateTree )
-  self.templateTree = wTemplateTree({});
+  if( !self.env )
+  self.env = wTemplateTree({ tree : { opt : self.opt, target : self.target } });
 
   /* */
 
@@ -103,7 +101,7 @@ var make = function make()
 
   self.targetsAdjust();
 
-  var nameOfTarget = process.argv[ 2 ] || 'all';
+  var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
 
   self.makeTarget( nameOfTarget );
 
@@ -116,8 +114,14 @@ var makeTarget = function makeTarget( target )
   var self = this;
   var con = new wConsequence();
 
+  // console.log( 'self.env.tree',self.env.tree );
+
   if( _.strIs( target ) )
-  target = self.env.target[ target ];
+  {
+    if( !self.env.tree.target[ target ] )
+    throw _.err( 'Target',target,'deos not exist!' );
+    target = self.env.tree.target[ target ];
+  }
 
   // logger.log( 'making target',target.name,target );
 
@@ -127,28 +131,23 @@ var makeTarget = function makeTarget( target )
     return;
   }
 
-  self._makeTargetAct( target );
+  self._makeTarget( target );
 
 }
 
 //
 
-var _makeTargetAct = function _makeTargetAct( target )
+var _makeTarget = function _makeTarget( target )
 {
   var self = this;
   var con = new wConsequence().give();
 
   if( _.strIs( target ) )
-  target = self.env.target[ target ];
+  target = self.env.tree.target[ target ];
 
   debugger;
   if( self.usingLogging )
   logger.logUp( 'making target',target.name );
-
-  // if( self.usingLogging )
-  // logger.log( target );
-  // if( self.usingLogging )
-  // logger.log( 'target.upToDate',target.upToDate );
 
   if( target.upToDate )
   {
@@ -156,38 +155,38 @@ var _makeTargetAct = function _makeTargetAct( target )
     return con;
   }
 
-  /* */
+  /* pre */
 
-  for( var d in target.dependencies )
+  if( target.pre )
+  con.ifNoErrorThen( function()
   {
-    var dep = target.dependencies[ d ];
+    return target.pre.call( self,target );
+  });
 
-    // logger.log( 'dep.kind',dep.kind );
+  /* dependencies */
 
-    if( dep.kind === 'recipe' )
-    {
-      con.ifNoErrorThen( _.routineSeal( self,self._makeTargetAct, [ dep ] ) );
-    }
-    else if( dep.kind === 'file' )
-    {
-      debugger;
-      // logger.log( 'file',dep.filePath,self.pathesFor( dep.filePath ) );
-      if( !self.fileProvider.fileStat( self.pathesFor( dep.filePath )[ 0 ] ) )
-      throw _.err( 'not made :',dep.filePath );
-    }
-    else throw _.err( 'unknown target kind',target.kind );
+  self._makeTargetDependencies( target,con );
 
-  }
+  /* shell */
 
-  /* */
-
-  con
-  .ifNoErrorThen( function()
+  if( target.shell )
+  con.ifNoErrorThen( function()
   {
     if( target.shell )
     return _.shell( target.shell );
-  })
-  .thenDo( function( err,data )
+  });
+
+  /* post */
+
+  if( target.post )
+  con.ifNoErrorThen( function()
+  {
+    return target.post.call( self,target );
+  });
+
+  /* end */
+
+  con.thenDo( function( err,data )
   {
     if( self.usingLogging )
     logger.logDown( '' );
@@ -200,27 +199,104 @@ var _makeTargetAct = function _makeTargetAct( target )
 
 //
 
+var _makeTargetDependencies = function _makeTargetDependencies( target,con )
+{
+  var self = this;
+
+  /* */
+
+  for( var d in target.beforeNodes )
+  {
+    var node = target.beforeNodes[ d ];
+
+    // logger.log( 'node.kind',node.kind );
+
+    if( node.kind === 'recipe' )
+    {
+      con.ifNoErrorThen( _.routineSeal( self,self._makeTarget, [ node ] ) );
+    }
+    else if( node.kind === 'file' )
+    {
+      debugger;
+      // logger.log( 'file',node.filePath,self.pathesFor( node.filePath ) );
+      if( !self.fileProvider.fileStat( self.pathesFor( node.filePath )[ 0 ] ) )
+      throw _.err( 'not made :',node.filePath );
+    }
+    else throw _.err( 'unknown target kind',target.kind );
+
+  }
+
+  return con;
+}
+
+//
+
+var _targetName = function _targetName( target )
+{
+
+  if( target.name !== undefined )
+  return target.name;
+  else if( _.strIs( target.after ) )
+  return target.after;
+  else if( _.arrayIs( target.target ) )
+  return target.after.join( ',' );
+  else throw _.err( 'no name for target',target );
+
+}
+
+//
+
 var targetsAdjust = function targetsAdjust()
 {
   var self = this;
 
-  _.assert( _.objectIs( self.env.target ) );
+  /* */
 
-  for( var t in self.env.target )
+  if( _.objectIs( self.env.tree.target ) )
+  for( var t in self.env.tree.target )
   {
 
-    var target = self.env.target[ t ];
+    var target = self.env.tree.target[ t ];
 
-    if( target.target === undefined )
-    target.target = t;
+    if( target.after === undefined )
+    target.after = t;
 
-    self.targetAdjust( target );
+    target.name = self._targetName( target );
+
+    if( t !== target.name )
+    throw _.err( 'Name of target',target.name,'does not match key',t );
+
+    if( self.defaultTargetName === null )
+    self.defaultTargetName = target.name;
 
   }
+  else if( _.arrayIs( self.env.tree.target ) )
+  {
+    var result = {};
+    for( var t = 0 ; t < self.env.tree.target.length ; t++ )
+    {
+      var target = self.env.tree.target[ t ];
 
-  self.templateTree.tree = self.env;
-  self.env = self.templateTree.assignAndResolve( self.env );
-  debugger;
+      target.name = self._targetName( target );
+      result[ target.name ] = target;
+
+      if( self.defaultTargetName === null )
+      self.defaultTargetName = target.name;
+
+    }
+
+    self.env.tree.target = result;
+  }
+
+  /* */
+
+  if( !_.objectIs( self.env.tree.target ) )
+  throw _.err( 'Maker expects map of targets ( target )' )
+
+  for( var t in self.env.tree.target )
+  self.targetAdjust( self.env.tree.target[ t ] );
+
+  self.env.resolveAndAssign();
 
 }
 
@@ -230,32 +306,56 @@ var targetAdjust = function targetAdjust( target )
 {
   var self = this;
 
-  _.assert( _.strIs( target.target ) );
-  _.assert( _.strIs( target.shell ) );
-  _.assert( _.strIs( target.dep ) || _.arrayIs( target.dep ) );
-  _.assert( target.kind === undefined );
+  /* verification */
 
-  if( target.name === undefined )
-  if( _.strIs( target.target ) )
-  target.name = target.target;
-  else if( _.arrayIs( target.target ) )
-  target.name = target.target.join( ',' );
-  else throw _.err( 'unknown type target',target.target );
+  var but = _.mapKeys( _.mapBut( target,self.Target[ 'recipe' ] ) );
+  if( but.length )
+  throw _.err( 'Target',target.name,'should not have fields',but );
 
+  if( target.shell && !_.strIs( target.shell ) )
+  throw _.err( 'Taget',target.name,'expects string ( shell )' );
+
+  if( target.pre && !_.routineIs( target.pre ) )
+  throw _.err( 'Taget',target.name,'expects routine ( pre )' );
+
+  if( target.post && !_.routineIs( target.post ) )
+  throw _.err( 'Taget',target.name,'expects routine ( post )' );
+
+  if( target.after && !_.arrayIs( target.after ) && !_.strIs( target.after ) )
+  throw _.err( 'Taget',target.name,'expects string or array ( target )' );
+
+  if( !_.arrayIs( target.before ) && !_.strIs( target.before ) )
+  throw _.err( 'Taget',target.name,'expects array or string ( before )' );
+
+  if( target.kind !== undefined )
+  throw _.err( 'Taget',target.name,'should not have ( kind )' );
+
+  /* */
+
+  if( _.strIs( target.after ) )
+  target.after = _.arrayAs( target.after );
+  target.before = _.arrayFlatten( target.before );
+  target.beforeNodes = {};
   target.kind = 'recipe';
 
-  target.dep = _.arrayFlatten( target.dep );
-
-  target.dependencies = {};
-
-  for( var d = 0 ; d < target.dep.length ; d++ )
+  for( var d = 0 ; d < target.before.length ; d++ )
   {
-    var dep = target.dep[ d ];
-    if( self.env.target[ dep ] )
-    target.dependencies[ dep ] = self.env.target[ dep ];
+    var name = target.before[ d ];
+
+    if( target.beforeNodes[ name ] )
+    throw _.err( 'Taget',target.name,'already has dependency',name );
+
+    if( self.env.tree.target[ name ] )
+    target.beforeNodes[ name ] = self.env.tree.target[ name ];
     else
-    target.dependencies[ dep ] = { kind : 'file', filePath : dep };
+    target.beforeNodes[ name ] = { kind : 'file', filePath : name };
   }
+
+  /* validation */
+
+  _.assert( _.arrayIs( target.after ) );
+  _.assert( _.arrayIs( target.before ) );
+  _.assertMapHasOnly( target,self.Target[ 'recipe processed' ] );
 
 }
 
@@ -286,10 +386,10 @@ var targetInvestigateUpToDateRecipe = function targetInvestigateUpToDateRecipe( 
 
   _.assert( target.kind === 'recipe' );
 
-  for( var d in target.dependencies )
+  for( var d in target.beforeNodes )
   {
-    var dep = target.dependencies[ d ];
-    result = self.targetInvestigateUpToDate( dep,target ) && result;
+    var node = target.beforeNodes[ d ];
+    result = self.targetInvestigateUpToDate( node,target ) && result;
   }
 
   target.upToDate = result;
@@ -310,21 +410,18 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
   {
     var result = file.upToDate;
     debugger;
-    logger.log( '! targetInvestigateUpToDateFile',dst,':',result );
+    logger.log( '! targetInvestigateUpToDateFile',recipe.after,':',result );
     return result;
   }
 
-  var dst = self.pathesFor( recipe.target );
+  var dst = self.pathesFor( recipe.after );
   var src = self.pathesFor( file.filePath );
-
-  // logger.log( 'dst',dst );
-  // logger.log( 'src',src );
 
   var result = self.fileProvider.filesIsUpToDate( dst,src );
 
   if( self.usingLogging )
   if( !result )
-  logger.log( 'targetInvestigateUpToDateFile',dst,':',result );
+  logger.log( 'targetInvestigateUpToDateFile(',recipe.after.join( ',' ),') :',result );
   // logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
 
   return result;
@@ -357,27 +454,93 @@ var pathesFor = function pathesFor( pathes )
   return [ result ];
 }
 
+//
+
+var _optSet = function _optSet( src )
+{
+  var self = this;
+
+  self[ optSymbol ] = src;
+
+  if( self.env )
+  self.env.tree.opt = src;
+
+}
+
+//
+
+var _targetSet = function _targetSet( src )
+{
+  var self = this;
+
+  self[ targetSymbol ] = src;
+
+  if( self.env )
+  self.env.tree.target = src;
+
+}
+
+// --
+// targets
+// --
+
+var target = _.like()
+.also
+({
+  name : '',
+})
+.end
+
+var recipe = _.like( target )
+.also
+({
+  shell : null,
+  after : null,
+  before : null,
+  pre : null,
+  post : null,
+})
+.end
+
+var recipeProcessed = _.like( recipe )
+.also
+({
+  kind : '',
+  beforeNodes : null,
+})
+.end
+
+var Target =
+{
+  'target' : target,
+  'recipe' : recipe,
+  'recipe processed' : recipeProcessed,
+}
+
 // --
 // relationship
 // --
 
+var optSymbol = Symbol.for( 'opt' );
+var targetSymbol = Symbol.for( 'target' );
+
 var Composes =
 {
+  defaultTargetName : null,
   usingLogging : 1,
   currentPath : null,
 }
 
 var Aggregates =
 {
-  // target : null,
-  // param : null,
-  env : null,
+  opt : null,
+  target : null,
 }
 
 var Associates =
 {
   fileProvider : null,
-  templateTree : null,
+  env : null,
 }
 
 var Restricts =
@@ -386,6 +549,7 @@ var Restricts =
 
 var Statics =
 {
+  Target : Target,
 }
 
 // --
@@ -397,7 +561,10 @@ var Proto =
 
   make : make,
   makeTarget : makeTarget,
-  _makeTargetAct : _makeTargetAct,
+  _makeTarget : _makeTarget,
+  _makeTargetDependencies : _makeTargetDependencies,
+
+  _targetName : _targetName,
 
   targetsAdjust : targetsAdjust,
   targetAdjust : targetAdjust,
@@ -410,6 +577,8 @@ var Proto =
   // etc
 
   pathesFor : pathesFor,
+  _optSet : _optSet,
+  _targetSet : _targetSet,
 
 
   //
@@ -438,6 +607,8 @@ wCopyable.mixin( Self );
 
 _.accessor( Self.prototype,
 {
+  opt : 'opt',
+  target : 'target',
 });
 
 //
