@@ -49,15 +49,19 @@ var createMaker = function( opt, target )
 
 //
 
+var exe = process.platform === `win32` ? `.exe` : ``;
+
 var simplest = function( test )
 {
+
   test.description = 'simple make';
 
   var opt =
   {
-    outPath : '../../../file/out',
-    outExe : '../../../file/out/test1',
-    src : '../../../file/test1.cpp',
+    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+    outPath : `{{opt/basePath}}/out`,
+    outExe : `{{opt/outPath}}/test1${exe}`,
+    src : `{{opt/basePath}}/test1.cpp`,
 
   };
 
