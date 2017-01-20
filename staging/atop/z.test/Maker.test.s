@@ -38,12 +38,13 @@ var pre = function pre()
 //
 
 var exe = process.platform === `win32` ? `.exe` : ``;
+var basePath = _.pathJoin( _.pathMainDir(),'../../../file' );
 
 var simplest = function( test )
 {
   var opt =
   {
-    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+    basePath: basePath,
     outPath : `{{opt/basePath}}/out`,
     outExe : `{{opt/outPath}}/test1${exe}`,
     src : `{{opt/basePath}}/test1.cpp`,
@@ -114,6 +115,95 @@ var simplest = function( test )
 
 //
 
+var recipeRunCheck = function( test )
+{
+  var file1 = _.pathJoin( basePath, 'file1');
+  var file2 = _.pathJoin( basePath, 'file2');
+
+  var called = false;
+  var pre = function(){ called = true; }
+
+  fileProvider.fileWriteAct
+  ({
+      pathFile : file1,
+      data : 'abc',
+      sync : 1,
+  });
+  var con = _.timeOut( 1000 );
+  con.thenDo( function( )
+  {
+    fileProvider.fileWriteAct
+    ({
+       pathFile : file2,
+       data : 'bca',
+       sync : 1,
+    });
+  })
+  .ifNoErrorThen( function()
+  {
+    test.description = 'after is older then before';
+    var target =
+    [
+      {
+        name : 'a1',
+        after : `${file1}`,
+        before : [ `${file2}` ],
+        pre : pre
+      }
+    ];
+    var con = wMaker({ target : target }).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen( function()
+  {
+    //if no error recipe is done
+    test.identical( called , true );
+  })
+  .ifNoErrorThen( function()
+  {
+    called = false;
+    var target =
+    [
+      {
+        name : 'a2',
+        after : `${file2}`,
+        before : [ `${file1}` ],
+        pre : pre
+      }
+    ];
+    test.description = 'after is newer then before';
+    var con = wMaker({ target : target }).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen( function()
+  {
+    test.identical( called, false );
+  })
+  .ifNoErrorThen( function()
+  {
+    var target =
+    [
+      {
+        name : 'a3',
+        after : `${file1}`,
+        before : [ `${file1}` ],
+        pre : pre
+      }
+    ];
+    test.description = 'after == newer';
+    var con = wMaker({ target : target }).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen( function()
+  {
+    test.identical( called, false );
+  });
+
+  return con;
+}
+
+//
+
 var targetsAdjust = function( test )
 {
   test.description = "check targets dependencies";
@@ -161,7 +251,7 @@ var targetInvestigateUpToDate = function( test )
 {
   var opt =
   {
-    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+    basePath: basePath,
   };
 
   var target =
@@ -224,6 +314,7 @@ var Proto =
   {
 
     simplest : simplest,
+    recipeRunCheck : recipeRunCheck,
     targetsAdjust : targetsAdjust,
     targetInvestigateUpToDate : targetInvestigateUpToDate,
 
