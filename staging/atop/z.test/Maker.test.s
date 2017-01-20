@@ -39,6 +39,8 @@ var pre = function pre()
 
 var createMaker = function( opt, target )
 {
+  opt = opt ? opt : {};
+  target = target ? target : [];
   var maker = wMaker({ opt : opt, target : target });
   maker.currentPath = _.pathMainDir();
   maker.fileProvider = fileProvider;
@@ -49,15 +51,16 @@ var createMaker = function( opt, target )
 
 //
 
+var exe = process.platform === `win32` ? `.exe` : ``;
+
 var simplest = function( test )
 {
-  test.description = 'simple make';
-
   var opt =
   {
-    outPath : './staging/atop/z.test/file/out',
-    outExe : './staging/atop/z.test/file/out/test1',
-    src : './staging/atop/z.test/file/test1.cpp',
+    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+    outPath : `{{opt/basePath}}/out`,
+    outExe : `{{opt/outPath}}/test1${exe}`,
+    src : `{{opt/basePath}}/test1.cpp`,
 
   };
 
@@ -66,7 +69,7 @@ var simplest = function( test )
     {
       name : 'test1',
       after : '{{opt/outExe}}',
-      before : [ './file/test1.cpp' ],
+      before : [ '{{opt/src}}' ],
       shell : `g++ {{opt/src}} -o {{opt/outExe}}`,
       pre : pre
     }
@@ -78,9 +81,90 @@ var simplest = function( test )
     target : target,
   };
 
-  wMaker( o ).make();
+  var con = new wConsequence().give();
 
-  test.identical( 1,1 );
+  con.ifNoErrorThen(function()
+  {
+    test.description = 'simple make';
+    var con = wMaker( o ).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen(function()
+  {
+    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    test.identical( got,true );
+  })
+  .ifNoErrorThen(function()
+  {
+    test.description = "try to make obj file ";
+
+    var target =
+    [
+      {
+        name : 'test4',
+        after : `{{opt/basePath}}/out/test2.o`,
+        before : [ `{{opt/basePath}}/test2.cpp` ],
+        shell : `g++ -c {{opt/basePath}}/test2.cpp -o {{opt/basePath}}/out/test2.o`,
+      }
+    ];
+
+    var o =
+    {
+      opt : opt,
+      target : target,
+    };
+
+    var con = wMaker( o ).make();
+    return test.shouldMessageOnlyOnce( con );
+  })
+  .ifNoErrorThen(function()
+  {
+    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
+    test.identical( got,true );
+  });
+
+  return con;
+}
+
+//
+
+var targetsAdjust = function( test )
+{
+  test.description = "check targets dependencies";
+  var target =
+  [
+    {
+      name : 'first',
+      after : `a1`,
+      before : [ 'a.cpp' ],
+    },
+    {
+      name : 'second',
+      after : [ 'a2' ],
+      before : [ 'first','a2.cpp' ],
+    }
+  ];
+
+  var maker = createMaker( { }, target );
+  target = maker.env.tree.target;
+  var got = [ target.first.beforeNodes, target.second.beforeNodes ];
+  var expected =
+  [
+    { 'a.cpp' : { kind : 'file', filePath : 'a.cpp' } },
+    {
+      'first' :
+      {
+        kind : 'recipe',
+        name : 'first',
+        before : [ 'a.cpp' ],
+        after : [ 'a1' ],
+        beforeNodes : { 'a.cpp' : { kind : 'file', filePath : 'a.cpp' } }
+      },
+      'a2.cpp' : { kind : 'file', filePath : 'a2.cpp' }
+    }
+  ];
+
+  test.identical( got, expected );
 
 }
 
@@ -88,35 +172,58 @@ var simplest = function( test )
 
 var targetInvestigateUpToDate = function( test )
 {
+  var opt =
+  {
+    basePath: _.pathJoin( _.pathMainDir(),'../../../file' ),
+  };
+
   var target =
   [
     {
-      name : 'test1',
-      after : './file/test1.cpp',
-      before : [ './file/test1.cpp' ],
+      name : 'test2',
+      after : `{{opt/basePath}}`,
+      before : [ `{{opt/basePath}}` ],
     }
   ];
 
-  test.description = "compare two indentical files"
-  var maker = createMaker( {}, target );
-  var t = maker.env.tree.target[ target[ 0 ].name ];
+  test.description = "compare two indentical files";
+  var maker = createMaker( opt, target );
+  var t = maker.env.tree.target[ 'test2' ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, true );
 
-  test.description = "compare src with output"
+  test.description = "compare src with output";
   var target =
   [
     {
-      name : 'test1',
-      after : './file/out/test1.o',
-      before : [ './file/test1.cpp' ],
+      name : 'test3',
+      after : `{{opt/basePath}}/1.o`,
+      before : [ `{{opt/basePath}}` ],
     }
   ];
-  var maker = createMaker( {}, target );
+  var maker = createMaker( opt, target );
   var t = maker.env.tree.target[ target[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, false );
 }
+
+//
+
+var pathesFor = function( test )
+{
+  test.description = "check if relative pathes are generated correctly";
+  var maker = createMaker( {}, {} );
+  var got = maker.pathesFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
+  var expected =
+  [
+    _.pathJoin( _.pathMainDir(), '../../../file' ),
+    _.pathJoin( _.pathMainDir(), '../../../file/test1.cpp' ),
+    _.pathJoin( _.pathMainDir(), '../../../test2.cpp' ),
+  ];
+
+  test.identical( got, expected );
+}
+
 
 var Proto =
 {
@@ -127,7 +234,11 @@ var Proto =
   {
 
     simplest : simplest,
-    targetInvestigateUpToDate : targetInvestigateUpToDate
+    targetsAdjust : targetsAdjust,
+    targetInvestigateUpToDate : targetInvestigateUpToDate,
+
+    //etc
+    pathesFor : pathesFor,
 
   },
 

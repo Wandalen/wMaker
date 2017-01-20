@@ -103,7 +103,7 @@ var make = function make()
 
   var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
 
-  self.makeTarget( nameOfTarget );
+  return self.makeTarget( nameOfTarget );
 
 }
 
@@ -128,10 +128,10 @@ var makeTarget = function makeTarget( target )
   if( self.targetInvestigateUpToDate( target ) )
   {
     logger.log( 'Recipe',target.name,'is up to date' );
-    return;
+    return con.give();
   }
 
-  self._makeTarget( target );
+  return self._makeTarget( target );
 
 }
 
@@ -335,22 +335,22 @@ var targetAdjust = function targetAdjust( target )
   throw _.err( 'Target',target.name,'should not have fields',but );
 
   if( target.shell && !_.strIs( target.shell ) )
-  throw _.err( 'Taget',target.name,'expects string ( shell )' );
+  throw _.err( 'Target',target.name,'expects string ( shell )' );
 
   if( target.pre && !_.routineIs( target.pre ) )
-  throw _.err( 'Taget',target.name,'expects routine ( pre )' );
+  throw _.err( 'Target',target.name,'expects routine ( pre )' );
 
   if( target.post && !_.routineIs( target.post ) )
-  throw _.err( 'Taget',target.name,'expects routine ( post )' );
+  throw _.err( 'Target',target.name,'expects routine ( post )' );
 
   if( target.after && !_.arrayIs( target.after ) && !_.strIs( target.after ) )
-  throw _.err( 'Taget',target.name,'expects string or array ( target )' );
+  throw _.err( 'Target',target.name,'expects string or array ( target )' );
 
   if( !_.arrayIs( target.before ) && !_.strIs( target.before ) )
-  throw _.err( 'Taget',target.name,'expects array or string ( before )' );
+  throw _.err( 'Target',target.name,'expects array or string ( before )' );
 
   if( target.kind !== undefined )
-  throw _.err( 'Taget',target.name,'should not have ( kind )' );
+  throw _.err( 'Target',target.name,'should not have ( kind )' );
 
   /* */
 
