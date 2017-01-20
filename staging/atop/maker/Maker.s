@@ -80,8 +80,8 @@ var make = function make()
 
   if( !self.target )
   throw _.err( 'Maker expects ( target )' );
-  if( !self.opt )
-  throw _.err( 'Maker expects ( opt )' );
+  // if( !self.opt )
+  // throw _.err( 'Maker expects ( opt )' );
 
   /* */
 
@@ -103,8 +103,8 @@ var make = function make()
 
   var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
 
+  if( nameOfTarget )
   return self.makeTarget( nameOfTarget );
-
 }
 
 //
