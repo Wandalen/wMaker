@@ -37,20 +37,6 @@ var pre = function pre()
 
 //
 
-var createMaker = function( opt, target )
-{
-  opt = opt ? opt : {};
-  target = target ? target : [];
-  var maker = wMaker({ opt : opt, target : target });
-  maker.currentPath = _.pathMainDir();
-  maker.fileProvider = fileProvider;
-  maker.env = wTemplateTree({ tree : { opt : maker.opt, target : maker.target } });
-  maker.targetsAdjust();
-  return maker;
-}
-
-//
-
 var exe = process.platform === `win32` ? `.exe` : ``;
 
 var simplest = function( test )
@@ -145,7 +131,8 @@ var targetsAdjust = function( test )
     }
   ];
 
-  var maker = createMaker( { }, target );
+  var maker = wMaker({ target : target, defaultTargetName : '' });
+  maker.make();
   target = maker.env.tree.target;
   var got = [ target.first.beforeNodes, target.second.beforeNodes ];
   var expected =
@@ -187,8 +174,9 @@ var targetInvestigateUpToDate = function( test )
   ];
 
   test.description = "compare two indentical files";
-  var maker = createMaker( opt, target );
-  var t = maker.env.tree.target[ 'test2' ];
+  var maker = wMaker({ opt : opt, target : target, defaultTargetName : '' });
+  maker.make();
+  var t = maker.env.tree.target[ target[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, true );
 
@@ -201,7 +189,8 @@ var targetInvestigateUpToDate = function( test )
       before : [ `{{opt/basePath}}` ],
     }
   ];
-  var maker = createMaker( opt, target );
+  var maker = wMaker({ opt : opt, target : target, defaultTargetName : '' });
+  maker.make();
   var t = maker.env.tree.target[ target[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, false );
@@ -212,7 +201,8 @@ var targetInvestigateUpToDate = function( test )
 var pathesFor = function( test )
 {
   test.description = "check if relative pathes are generated correctly";
-  var maker = createMaker( {}, {} );
+  var maker = wMaker({ target : {}, defaultTargetName : '' });
+  maker.make();
   var got = maker.pathesFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
   var expected =
   [
