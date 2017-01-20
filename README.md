@@ -35,7 +35,6 @@ npm install wmaker
 |make|Runs default target using name specified as 'defaultTargetName' or as command line argument.
 |makeTarget|Runs target using name passed as argument.
 
-
 ##### Example #1
 ```javascript
 /*simplest make target example using g++*/
@@ -71,4 +70,45 @@ var target =
   shell : `g++ -c my_file.cpp -o my_file.o`
 }
 wMaker({ target : [ target ] }).make();
+```
+##### Example #3
+```javascript
+/*run specific target using makeTarget*/
+var target =
+{
+  name : 't1',
+  after : 'my_file.o',
+  before : 'my_file.cpp',
+  shell : `g++ -c my_file.cpp -o my_file.o`
+}
+var maker = wMaker
+({
+  target : [ target ],
+  defaultTargetName : '' /*disable default target execution by make()*/
+});
+maker.make(); /*run make to process provided target info*/
+maker.makeTarget( 't1' ); /*run recipe*/
+```
+##### Example #4
+```javascript
+/*run specific target using command line*/
+var target =
+[
+  {
+    name : 't1',
+    after : 'my_file.o',
+    before : 'my_file.cpp',
+    shell : `g++ -c my_file.cpp -o my_file.o`
+  },
+  {
+    name : 't2',
+    after : 'my_file', /*on windows: my_file.exe*/
+    before : 'my_file.o',
+    shell : `g++ my_file.o -o my_file`
+  }
+]
+wMaker({ target : target }).make();
+```
+```terminal
+node my_make_file.js t1
 ```
