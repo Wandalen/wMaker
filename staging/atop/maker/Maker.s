@@ -103,8 +103,8 @@ var make = function make()
 
   var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
 
+  if( nameOfTarget )
   return self.makeTarget( nameOfTarget );
-
 }
 
 //
