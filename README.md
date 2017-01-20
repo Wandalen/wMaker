@@ -10,7 +10,7 @@ npm install wmaker
 ## Usage
 ### Options
 |  Name 	|Type| Optional  	| Description  	|
-|---	|-|---  |---  |
+|---	|---	|---  |---  |
 |opt |object|*|Structure for storing user defined variables.
 |target|array|-|Array which stores make recipes.
 |defaultTargetName|string|*|Make will run this target by default, useful with multiple recipes, if not specified first target in the structure will be default.
