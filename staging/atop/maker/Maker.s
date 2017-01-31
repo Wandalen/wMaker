@@ -256,7 +256,7 @@ var _targetName = function _targetName( target )
   result = target.name;
   else if( _.strIs( target.after ) )
   result = target.after;
-  else if( _.arrayIs( target.target ) )
+  else if( _.arrayIs( target.after ) )
   result = target.after.join( ',' );
   else throw _.err( 'no name for target',target );
 
