@@ -41,7 +41,7 @@ if( typeof module !== 'undefined' )
   }
   catch( err )
   {
-    require( 'wTemplateTree' );
+    require( 'wtemplatetree' );
   }
 
   if( typeof wLogger === 'undefined' )
