@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "wTools": "",
-    "wTemplateTree": "",
+    "wtemplatetree": "",
     "wLogger": ""
   },
   "devDependencies": {
