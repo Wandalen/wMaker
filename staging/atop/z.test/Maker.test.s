@@ -130,7 +130,7 @@ var recipeRunCheck = function( test )
       sync : 1,
   });
   var con = _.timeOut( 1000 );
-  con.thenDo( function( )
+  con.doThen( function( )
   {
     fileProvider.fileWriteAct
     ({

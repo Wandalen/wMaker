@@ -8,15 +8,6 @@ if( typeof module !== 'undefined' )
   if( typeof wBase === 'undefined' )
   try
   {
-    require( '../include/BackTools.s' );
-  }
-  catch( err )
-  {
-  }
-
-  if( typeof wBase === 'undefined' )
-  try
-  {
     require( '../include/wTools.s' );
   }
   catch( err )
@@ -24,35 +15,11 @@ if( typeof module !== 'undefined' )
     require( 'wTools' );
   }
 
-  if( !wTools.FileProvider  )
-  try
-  {
-    require( '../include/amid/file/Files.ss' );
-  }
-  catch( err )
-  {
-    require( 'wFiles' );
-  }
+  var _ = wTools;
 
-  if( !wTools.TemplateTree  )
-  try
-  {
-    require( '../include/amid/mapping/TemplateTree.s' );
-  }
-  catch( err )
-  {
-    require( 'wtemplatetree' );
-  }
-
-  if( typeof wLogger === 'undefined' )
-  try
-  {
-    require( '../include/abase/object/printer/printer/Logger.s' );
-  }
-  catch( err )
-  {
-    require( 'wLogger' );
-  }
+  _.include( 'wFiles' );
+  _.include( 'wTemplateTree' );
+  _.include( 'wLogger' );
 
 }
 
@@ -203,7 +170,7 @@ var _makeTarget = function _makeTarget( target )
 
   /* end */
 
-  con.thenDo( function( err,data )
+  con.doThen( function( err,data )
   {
 
     if( self.usingLogging )
