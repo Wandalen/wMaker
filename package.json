@@ -3,10 +3,15 @@
   "version": "0.3.12",
   "description": "Analog of so-called 'make' in Java Script.",
   "author": "Kostiantyn Wandalen <wtory.net@domainsbyproxy.com>",
-  "contributors": [
+  "contributors":
+  [
     {
       "name": "Kostiantyn Wandalen",
       "email": "wtory.net@domainsbyproxy.com>"
+    },
+    {
+      "name": "Volodymyr M.",
+      "email": "volodymyr.migdal@gmail.com"
     }
   ],
   "license": "MIT",

@@ -55,7 +55,7 @@ var make = function make()
   /* */
 
   if( !self.currentPath )
-  self.currentPath = _.pathMainDir();
+  self.currentPath = _.pathRealMainDir();
 
   if( !self.fileProvider )
   self.fileProvider = _.FileProvider.HardDrive();
@@ -115,7 +115,7 @@ var _makeTarget = function _makeTarget( target )
   target = self.env.tree.target[ target ];
 
   debugger;
-  if( self.usingLogging )
+  if( self.verbosity )
   logger.logUp( 'making target',target.name );
 
   if( target.upToDate )
@@ -173,7 +173,7 @@ var _makeTarget = function _makeTarget( target )
   con.doThen( function( err,data )
   {
 
-    if( self.usingLogging )
+    if( self.verbosity )
     logger.logDown( '' );
 
     if( err )
@@ -409,7 +409,7 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
 
   var result = self.fileProvider.filesIsUpToDate( dst,src );
 
-  if( self.usingLogging )
+  if( self.verbosity )
   if( !result )
   logger.log( 'targetInvestigateUpToDateFile(',recipe.after.join( ',' ),') :',result );
   // logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
@@ -517,7 +517,7 @@ var targetSymbol = Symbol.for( 'target' );
 var Composes =
 {
   defaultTargetName : null,
-  usingLogging : 1,
+  verbosity : 1,
   currentPath : null,
 }
 
