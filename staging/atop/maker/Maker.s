@@ -8,7 +8,7 @@ if( typeof module !== 'undefined' )
   if( typeof wBase === 'undefined' )
   try
   {
-    require( '../include/wTools.s' );
+    require( '../../abase/wTools.s' );
   }
   catch( err )
   {
@@ -41,14 +41,14 @@ Self.nameShort = 'Maker';
 
 //
 
-var make = function make()
+function make()
 {
   var self = this;
 
   _.assert( arguments.length === 0 );
 
-  if( !self.target )
-  throw _.err( 'Maker expects ( target )' );
+  if( !self.recipe )
+  throw _.err( 'Maker expects ( recipe )' );
   // if( !self.opt )
   // throw _.err( 'Maker expects ( opt )' );
 
@@ -61,7 +61,7 @@ var make = function make()
   self.fileProvider = _.FileProvider.HardDrive();
 
   if( !self.env )
-  self.env = wTemplateTree({ tree : { opt : self.opt, target : self.target } });
+  self.env = wTemplateTree({ tree : { opt : self.opt, recipe : self.recipe } });
 
   /* */
 
@@ -78,47 +78,46 @@ var make = function make()
 
 //
 
-var makeTarget = function makeTarget( target )
+function makeTarget( recipe )
 {
   var self = this;
   var con = new wConsequence();
 
+  _.assert( arguments.length === 1 );
   // console.log( 'self.env.tree',self.env.tree );
 
-  if( _.strIs( target ) )
+  if( _.strIs( recipe ) )
   {
-    if( !self.env.tree.target[ target ] )
-    throw _.err( 'Target',target,'deos not exist!' );
-    target = self.env.tree.target[ target ];
+    if( !self.env.tree.recipe[ recipe ] )
+    throw _.errBriefly( 'Recipe',recipe,'deos not exist!' );
+    recipe = self.env.tree.recipe[ recipe ];
   }
 
-  // logger.log( 'making target',target.name,target );
+  // logger.log( 'making recipe',recipe.name,recipe );
 
-  if( self.targetInvestigateUpToDate( target ) )
+  if( self.targetInvestigateUpToDate( recipe ) )
   {
-    logger.log( 'Recipe',target.name,'is up to date' );
+    logger.log( 'Recipe',recipe.name,'is up to date' );
     return con.give();
   }
 
-  return self._makeTarget( target );
-
+  return self._makeTarget( recipe );
 }
 
 //
 
-var _makeTarget = function _makeTarget( target )
+function _makeTarget( recipe )
 {
   var self = this;
   var con = new wConsequence().give();
 
-  if( _.strIs( target ) )
-  target = self.env.tree.target[ target ];
+  if( _.strIs( recipe ) )
+  recipe = self.env.tree.recipe[ recipe ];
 
-  debugger;
   if( self.verbosity )
-  logger.logUp( 'making target',target.name );
+  logger.logUp( 'making recipe',recipe.name );
 
-  if( target.upToDate )
+  if( recipe.upToDate )
   {
     logger.logDown( '' );
     return con;
@@ -126,31 +125,31 @@ var _makeTarget = function _makeTarget( target )
 
   /* pre */
 
-  if( target.pre )
+  if( recipe.pre )
   con.ifNoErrorThen( function()
   {
-    return target.pre.call( self,target );
+    return recipe.pre.call( self,recipe );
   });
 
   /* dependencies */
 
-  self._makeTargetDependencies( target,con );
+  self._makeTargetDependencies( recipe,con );
 
   /* shell */
 
-  if( target.shell )
+  if( recipe.shell )
   con.ifNoErrorThen( function()
   {
-    if( target.shell )
-    return _.shell( target.shell );
+    if( recipe.shell )
+    return _.shell( recipe.shell );
   });
 
   /* post */
 
-  if( target.post )
+  if( recipe.post )
   con.ifNoErrorThen( function()
   {
-    return target.post.call( self,target );
+    return recipe.post.call( self,recipe );
   });
 
   /* validation */
@@ -158,13 +157,10 @@ var _makeTarget = function _makeTarget( target )
   con.ifNoErrorThen( function()
   {
 
-    var pathes = self.pathesFor( target.after );
-    for( var a = 0 ; a < target.after.length ; a++ )
-    {
-      logger.log( 'checking',pathes[ a ] );
-      if( !self.fileProvider.fileStat( pathes[ a ] ) )
-      throw _.err( 'Target',target.name,'failed to produce',pathes[ a ] );
-    }
+    debugger;
+    var done = self.targetIsDone( recipe );
+    if( !done.ok )
+    throw _.errBriefly( 'Recipe "' + recipe.name +'" failed to produce "' + done.missing + '"' );
 
   });
 
@@ -173,11 +169,20 @@ var _makeTarget = function _makeTarget( target )
   con.doThen( function( err,data )
   {
 
+    debugger;
+
+    if( err )
+    {
+      debugger;
+      _.appReturnCode( -1 );
+      err = _.errLogOnce( err );
+    }
+
     if( self.verbosity )
     logger.logDown( '' );
 
     if( err )
-    throw _.errLogOnce( err );
+    throw err;
   });
 
   return con;
@@ -185,15 +190,15 @@ var _makeTarget = function _makeTarget( target )
 
 //
 
-var _makeTargetDependencies = function _makeTargetDependencies( target,con )
+function _makeTargetDependencies( recipe,con )
 {
   var self = this;
 
   /* */
 
-  for( var d in target.beforeNodes )
+  for( var d in recipe.beforeNodes )
   {
-    var node = target.beforeNodes[ d ];
+    var node = recipe.beforeNodes[ d ];
 
     // logger.log( 'node.kind',node.kind );
 
@@ -208,7 +213,7 @@ var _makeTargetDependencies = function _makeTargetDependencies( target,con )
       if( !self.fileProvider.fileStat( self.pathesFor( node.filePath )[ 0 ] ) )
       throw _.err( 'not made :',node.filePath );
     }
-    else throw _.err( 'unknown target kind',target.kind );
+    else throw _.err( 'unknown recipe kind',recipe.kind );
 
   }
 
@@ -217,75 +222,75 @@ var _makeTargetDependencies = function _makeTargetDependencies( target,con )
 
 //
 
-var _targetName = function _targetName( target )
+function _targetName( recipe )
 {
   var result;
 
-  if( target.name !== undefined )
-  result = target.name;
-  else if( _.strIs( target.after ) )
-  result = target.after;
-  else if( _.arrayIs( target.after ) )
-  result = target.after.join( ',' );
-  else throw _.err( 'no name for target',target );
+  if( recipe.name !== undefined )
+  result = recipe.name;
+  else if( _.strIs( recipe.after ) )
+  result = recipe.after;
+  else if( _.arrayIs( recipe.after ) )
+  result = recipe.after.join( ',' );
+  else throw _.err( 'no name for recipe',recipe );
 
   if( !_.strIsNotEmpty( result ) )
-  throw _.err( 'no name for target',target );
+  throw _.err( 'no name for recipe',recipe );
 
   return result;
 }
 
 //
 
-var targetsAdjust = function targetsAdjust()
+function targetsAdjust()
 {
   var self = this;
 
   /* */
 
-  if( _.objectIs( self.env.tree.target ) )
-  for( var t in self.env.tree.target )
+  if( _.objectIs( self.env.tree.recipe ) )
+  for( var t in self.env.tree.recipe )
   {
 
-    var target = self.env.tree.target[ t ];
+    var recipe = self.env.tree.recipe[ t ];
 
-    if( target.after === undefined )
-    target.after = t;
+    if( recipe.after === undefined )
+    recipe.after = t;
 
-    target.name = self._targetName( target );
+    recipe.name = self._targetName( recipe );
 
-    if( t !== target.name )
-    throw _.err( 'Name of target',target.name,'does not match key',t );
+    if( t !== recipe.name )
+    throw _.err( 'Name of recipe',recipe.name,'does not match key',t );
 
     if( self.defaultTargetName === null )
-    self.defaultTargetName = target.name;
+    self.defaultTargetName = recipe.name;
 
   }
-  else if( _.arrayIs( self.env.tree.target ) )
+  else if( _.arrayIs( self.env.tree.recipe ) )
   {
     var result = {};
-    for( var t = 0 ; t < self.env.tree.target.length ; t++ )
+    for( var t = 0 ; t < self.env.tree.recipe.length ; t++ )
     {
-      var target = self.env.tree.target[ t ];
+      var recipe = self.env.tree.recipe[ t ];
 
-      target.name = self._targetName( target );
-      result[ target.name ] = target;
+      recipe.name = self._targetName( recipe );
+      result[ recipe.name ] = recipe;
 
       if( self.defaultTargetName === null )
-      self.defaultTargetName = target.name;
+      self.defaultTargetName = recipe.name;
 
     }
 
-    self.env.tree.target = result;
+    self.env.tree.recipe = result;
   }
 
   /* */
 
-  if( !_.objectIs( self.env.tree.target ) )
-  throw _.err( 'Maker expects map of targets ( target )' )
+  if( !_.objectIs( self.env.tree.recipe ) )
+  throw _.err( 'Maker expects map of targets ( recipe )' )
 
-  for( var t in self.env.tree.target )
-  self.targetAdjust( self.env.tree.target[ t ] );
+  for( var t in self.env.tree.recipe )
+  self.targetAdjust( self.env.tree.recipe[ t ] );
 
   self.env.resolveAndAssign();
 
@@ -293,103 +298,136 @@ var targetsAdjust = function targetsAdjust()
 
 //
 
-var targetAdjust = function targetAdjust( target )
+function targetAdjust( recipe )
 {
   var self = this;
 
   /* verification */
 
-  var but = _.mapKeys( _.mapBut( target,self.Target[ 'recipe' ] ) );
+  var but = _.mapKeys( _.mapBut( recipe,self.Recipe[ 'recipe' ] ) );
   if( but.length )
-  throw _.err( 'Target',target.name,'should not have fields',but );
+  throw _.err( 'Recipe',recipe.name,'should not have fields',but );
 
-  if( target.shell && !_.strIs( target.shell ) )
-  throw _.err( 'Target',target.name,'expects string ( shell )' );
+  if( recipe.shell && !_.strIs( recipe.shell ) )
+  throw _.err( 'Recipe',recipe.name,'expects string ( shell )' );
 
-  if( target.pre && !_.routineIs( target.pre ) )
-  throw _.err( 'Target',target.name,'expects routine ( pre )' );
+  if( recipe.pre && !_.routineIs( recipe.pre ) )
+  throw _.err( 'Recipe',recipe.name,'expects routine ( pre )' );
 
-  if( target.post && !_.routineIs( target.post ) )
-  throw _.err( 'Target',target.name,'expects routine ( post )' );
+  if( recipe.post && !_.routineIs( recipe.post ) )
+  throw _.err( 'Recipe',recipe.name,'expects routine ( post )' );
 
-  if( target.after && !_.arrayIs( target.after ) && !_.strIs( target.after ) )
-  throw _.err( 'Target',target.name,'expects string or array ( target )' );
+  if( recipe.after && !_.arrayIs( recipe.after ) && !_.strIs( recipe.after ) )
+  throw _.err( 'Recipe',recipe.name,'expects string or array ( recipe )' );
 
-  if( !_.arrayIs( target.before ) && !_.strIs( target.before ) )
-  throw _.err( 'Target',target.name,'expects array or string ( before )' );
+  if( !_.arrayIs( recipe.before ) && !_.strIs( recipe.before ) )
+  throw _.err( 'Recipe',recipe.name,'expects array or string ( before )' );
 
-  if( target.kind !== undefined )
-  throw _.err( 'Target',target.name,'should not have ( kind )' );
+  if( recipe.kind !== undefined )
+  throw _.err( 'Recipe',recipe.name,'should not have ( kind )' );
 
   /* */
 
-  target.after = _.arrayAs( target.after );
-  target.before = _.arrayFlatten( target.before );
-  target.beforeNodes = {};
-  target.kind = 'recipe';
+  recipe.after = _.arrayAs( recipe.after );
+  recipe.before = _.arrayFlatten( recipe.before );
+  recipe.beforeNodes = {};
+  recipe.kind = 'recipe';
 
-  for( var d = 0 ; d < target.before.length ; d++ )
+  if( recipe.debug )
+  debugger;
+
+  for( var d = 0 ; d < recipe.before.length ; d++ )
   {
-    var name = target.before[ d ];
+    var name = recipe.before[ d ];
 
-    if( target.beforeNodes[ name ] )
-    throw _.err( 'Taget',target.name,'already has dependency',name );
+    if( recipe.beforeNodes[ name ] )
+    throw _.err( 'Taget',recipe.name,'already has dependency',name );
 
-    if( self.env.tree.target[ name ] )
-    target.beforeNodes[ name ] = self.env.tree.target[ name ];
+    if( self.env.tree.recipe[ name ] )
+    recipe.beforeNodes[ name ] = self.env.tree.recipe[ name ];
     else
-    target.beforeNodes[ name ] = { kind : 'file', filePath : name };
+    recipe.beforeNodes[ name ] = { kind : 'file', filePath : name };
   }
 
   /* validation */
 
-  _.assert( _.arrayIs( target.after ) );
-  _.assert( _.arrayIs( target.before ) );
-  _.assertMapHasOnly( target,self.Target[ 'recipe processed' ] );
+  _.assert( _.arrayIs( recipe.after ) );
+  _.assert( _.arrayIs( recipe.before ) );
+  _.assertMapHasOnly( recipe,self.Recipe[ 'recipe processed' ] );
 
 }
 
 //
 
-var targetInvestigateUpToDate = function targetInvestigateUpToDate( target,parent )
+function targetIsDone( recipe )
 {
   var self = this;
-  var result = true;
+  var result = Object.create( null );
+  result.ok = 0;
 
-  if( target.kind === 'recipe' )
-  result = self.targetInvestigateUpToDateRecipe( target ) && result;
-  else if( target.kind === 'file' )
-  result = self.targetInvestigateUpToDateFile( target,parent ) && result;
-  else throw _.err( 'unknown target kind',target.kind );
+  _.assert( arguments.length === 1 );
 
-  target.upToDate = result;
-
-  return result;
-}
-
-//
-
-var targetInvestigateUpToDateRecipe = function targetInvestigateUpToDateRecipe( target )
-{
-  var self = this;
-  var result = true;
-
-  _.assert( target.kind === 'recipe' );
-
-  for( var d in target.beforeNodes )
+  var pathes = self.pathesFor( recipe.after );
+  for( var a = 0 ; a < recipe.after.length ; a++ )
   {
-    var node = target.beforeNodes[ d ];
-    result = self.targetInvestigateUpToDate( node,target ) && result;
+    // logger.log( 'checking',pathes[ a ] );
+    if( !self.fileProvider.fileStat( pathes[ a ] ) )
+    {
+      result.missing = pathes[ a ];
+      return result;
+    }
   }
 
-  target.upToDate = result;
+  result.ok = 1;
+  return result;
+}
+
+//
+
+function targetInvestigateUpToDate( recipe,parent )
+{
+  var self = this;
+  var result = true;
+
+  // console.log( 'targetInvestigateUpToDate',recipe ); debugger;
+
+  if( recipe.kind === 'recipe' )
+  result = self.targetInvestigateUpToDateRecipe( recipe ) && result;
+  else if( recipe.kind === 'file' )
+  result = self.targetInvestigateUpToDateFile( recipe,parent ) && result;
+  else throw _.err( 'unknown recipe kind',recipe.kind );
+
+  recipe.upToDate = result;
 
   return result;
 }
 
 //
 
-var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file,recipe )
+function targetInvestigateUpToDateRecipe( recipe )
+{
+  var self = this;
+  var result = true;
+
+  _.assert( recipe.kind === 'recipe' );
+
+  if( !Object.keys( recipe.beforeNodes ).length )
+  result = false;
+
+  for( var d in recipe.beforeNodes )
+  {
+    var node = recipe.beforeNodes[ d ];
+    result = self.targetInvestigateUpToDate( node,recipe ) && result;
+  }
+
+  recipe.upToDate = result;
+
+  return result;
+}
+
+//
+
+function targetInvestigateUpToDateFile( file,recipe )
 {
   var self = this;
 
@@ -400,7 +438,7 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
   {
     var result = file.upToDate;
     debugger;
-    logger.log( '! targetInvestigateUpToDateFile',recipe.after,':',result );
+    // logger.log( '! targetInvestigateUpToDateFile',recipe.after,':',result );
     return result;
   }
 
@@ -409,8 +447,8 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
 
   var result = self.fileProvider.filesIsUpToDate( dst,src );
 
-  if( self.verbosity )
-  if( !result )
+  if( self.verbosity > 1 )
+  // if( !result )
   logger.log( 'targetInvestigateUpToDateFile(',recipe.after.join( ',' ),') :',result );
   // logger.log( 'targetInvestigateUpToDateFile(',dst,'<-',src,') :',result );
 
@@ -421,7 +459,7 @@ var targetInvestigateUpToDateFile = function targetInvestigateUpToDateFile( file
 // etc
 // --
 
-var pathesFor = function pathesFor( pathes )
+function pathesFor( pathes )
 {
   var self = this;
 
@@ -439,14 +477,14 @@ var pathesFor = function pathesFor( pathes )
     return result;
   }
 
-  var result = _.pathJoin( self.currentPath,pathes );
+  var result = _.pathResolve( self.currentPath,pathes );
 
   return [ result ];
 }
 
 //
 
-var _optSet = function _optSet( src )
+function _optSet( src )
 {
   var self = this;
 
@@ -459,14 +497,14 @@ var _optSet = function _optSet( src )
 
 //
 
-var _targetSet = function _targetSet( src )
+function _targetSet( src )
 {
   var self = this;
 
   self[ targetSymbol ] = src;
 
   if( self.env )
-  self.env.tree.target = src;
+  self.env.tree.recipe = src;
 
 }
 
@@ -474,21 +512,22 @@ var _targetSet = function _targetSet( src )
 // targets
 // --
 
-var target = _.like()
+var abstract = _.like()
 .also
 ({
   name : '',
 })
 .end
 
-var recipe = _.like( target )
+var recipe = _.like( abstract )
 .also
 ({
   shell : null,
-  after : null,
   before : null,
+  after : null,
   pre : null,
   post : null,
+  debug : 0,
 })
 .end
 
@@ -500,9 +539,9 @@ var recipeProcessed = _.like( recipe )
 })
 .end
 
-var Target =
+var Recipe =
 {
-  'target' : target,
+  'abstract' : abstract,
   'recipe' : recipe,
   'recipe processed' : recipeProcessed,
 }
@@ -512,7 +551,7 @@ var Target =
 // --
 
 var optSymbol = Symbol.for( 'opt' );
-var targetSymbol = Symbol.for( 'target' );
+var targetSymbol = Symbol.for( 'recipe' );
 
 var Composes =
 {
@@ -524,7 +563,7 @@ var Composes =
 var Aggregates =
 {
   opt : null,
-  target : null,
+  recipe : null,
 }
 
 var Associates =
@@ -539,7 +578,7 @@ var Restricts =
 
 var Statics =
 {
-  Target : Target,
+  Recipe : Recipe,
 }
 
 // --
@@ -558,6 +597,7 @@ var Proto =
 
   targetsAdjust : targetsAdjust,
   targetAdjust : targetAdjust,
+  targetIsDone : targetIsDone,
 
   targetInvestigateUpToDate : targetInvestigateUpToDate,
   targetInvestigateUpToDateRecipe : targetInvestigateUpToDateRecipe,
@@ -598,7 +638,7 @@ wCopyable.mixin( Self );
 _.accessor( Self.prototype,
 {
   opt : 'opt',
-  target : 'target',
+  recipe : 'recipe',
 });
 
 //
