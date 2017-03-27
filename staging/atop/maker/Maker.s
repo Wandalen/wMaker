@@ -174,7 +174,7 @@ function _makeTarget( recipe )
     if( err )
     {
       debugger;
-      _.appReturnCode( -1 );
+      _.appExitCode( -1 );
       err = _.errLogOnce( err );
     }
 
@@ -445,7 +445,7 @@ function targetInvestigateUpToDateFile( file,recipe )
   var dst = self.pathesFor( recipe.after );
   var src = self.pathesFor( file.filePath );
 
-  var result = self.fileProvider.filesIsUpToDate( dst,src );
+  var result = self.fileProvider.filesAreUpToDate( dst,src );
 
   if( self.verbosity > 1 )
   // if( !result )
