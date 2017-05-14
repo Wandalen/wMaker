@@ -626,7 +626,7 @@ var Proto =
 
 _.protoMake
 ({
-  constructor : Self,
+  cls : Self,
   extend : Proto,
   parent : Parent,
 });

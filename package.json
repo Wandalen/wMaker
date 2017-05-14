@@ -1,6 +1,7 @@
 {
   "name": "wmaker",
   "version": "0.3.15",
+  "engine" : "node >= 5.0.0",
   "description": "Analog of so-called 'make' in Java Script.",
   "author": "Kostiantyn Wandalen <wtory.net@domainsbyproxy.com>",
   "contributors": [
