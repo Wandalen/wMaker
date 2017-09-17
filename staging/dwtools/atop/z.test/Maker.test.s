@@ -8,7 +8,7 @@ to run this test
 from the project directory run
 
 npm install
-node ./staging/atop/z.test/Maker.test.s
+node ./staging/dwtools/atop/z.test/Maker.test.s
 
 */
 

@@ -15,18 +15,18 @@
     }
   ],
   "license": "MIT",
-  "main": "staging/atop/maker/Maker.s",
+  "main": "staging/dwtools/atop/maker/Maker.s",
   "files": [
-    "staging/atop",
+    "staging/dwtools/atop",
     "production"
   ],
   "directories": {
     "test": "wtest staging",
     "doc": "doc",
-    "main": "staging/atop/maker/Maker.s"
+    "main": "staging/dwtools/atop/maker/Maker.s"
   },
   "scripts": {
-    "test": "node staging/atop/maker/Maker.test.s",
+    "test": "wtest staging",
     "make_doc": "./doc.sh"
   },
   "repository": {
@@ -42,7 +42,8 @@
     "wLogger": ""
   },
   "devDependencies": {
-    "wTesting": ""
+    "wTesting": "",
+    "wmaker": "."
   },
   "keywords": [
     "wTools",
