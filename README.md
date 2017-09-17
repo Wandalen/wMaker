@@ -1,5 +1,6 @@
 
-## wMaker
+# wMaker [![Build Status](https://travis-ci.org/Wandalen/wMaker.svg?branch=master)](https://travis-ci.org/Wandalen/wMaker)
+
 Analog of so-called 'make' in Java Script.
 
 ## Installation
@@ -112,11 +113,4 @@ wMaker({ target : target }).make();
 ```terminal
 node my_make_file.js t1
 ```
-
-
-
-
-
-
-
 
