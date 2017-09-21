@@ -123,7 +123,7 @@ var simplest = function( test )
   {
     test.description = 'simple make';
     debugger
-    var con = wMaker( o ).make();
+    var con = wMaker( o ).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen(function()
@@ -151,7 +151,7 @@ var simplest = function( test )
       recipe : recipe,
     };
 
-    var con = wMaker( o ).make();
+    var con = wMaker( o ).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen(function()
@@ -201,7 +201,7 @@ var recipeRunCheck = function( test )
         pre : pre
       }
     ];
-    var con = wMaker({ recipe : recipe }).make();
+    var con = wMaker({ recipe : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -222,7 +222,7 @@ var recipeRunCheck = function( test )
       }
     ];
     test.description = 'after is newer then before';
-    var con = wMaker({ recipe : recipe }).make();
+    var con = wMaker({ recipe : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -241,7 +241,7 @@ var recipeRunCheck = function( test )
       }
     ];
     test.description = 'after == newer';
-    var con = wMaker({ recipe : recipe }).make();
+    var con = wMaker({ recipe : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -272,7 +272,7 @@ var targetsAdjust = function( test )
   ];
 
   var maker = wMaker({ recipe : recipe, defaultTargetName : '' });
-  maker.make();
+  maker.form();
   recipe = maker.env.tree.recipe;
   var got = [ recipe.first.beforeNodes, recipe.second.beforeNodes ];
   var expected =
@@ -315,7 +315,7 @@ var targetInvestigateUpToDate = function( test )
 
   test.description = "compare two indentical files";
   var maker = wMaker({ opt : opt, recipe : recipe, defaultTargetName : '' });
-  maker.make();
+  maker.form();
   var t = maker.env.tree.recipe[ recipe[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, true );
@@ -330,7 +330,7 @@ var targetInvestigateUpToDate = function( test )
     }
   ];
   var maker = wMaker({ opt : opt, recipe : recipe, defaultTargetName : '' });
-  maker.make();
+  maker.form();
   var t = maker.env.tree.recipe[ recipe[ 0 ].name ];
   var got = maker.targetInvestigateUpToDate( t );
   test.identical( got, false );
@@ -342,7 +342,7 @@ var pathesFor = function( test )
 {
   test.description = "check if relative pathes are generated correctly";
   var maker = wMaker({ recipe : {}, defaultTargetName : '' });
-  maker.make();
+  maker.form();
   var got = maker.pathesFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
   var currentDir = _.pathRealMainDir();
   var expected =
