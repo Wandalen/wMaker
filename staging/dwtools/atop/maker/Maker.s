@@ -70,7 +70,7 @@ function make()
 
   self.targetsAdjust();
 
-  var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
+  var nameOfTarget = _.definedIs( self.defaultTargetName ) ? self.defaultTargetName : process.argv[ 2 ];
 
   if( nameOfTarget )
   return self.makeTarget( nameOfTarget );
@@ -329,7 +329,7 @@ function targetAdjust( recipe )
   /* */
 
   recipe.after = _.arrayAs( recipe.after );
-  recipe.before = _.arrayFlatten( recipe.before );
+  recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
   recipe.beforeNodes = {};
   recipe.kind = 'recipe';
 
