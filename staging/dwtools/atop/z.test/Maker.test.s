@@ -44,30 +44,18 @@ var files =
   }`
 }
 
-var basePath;
+var basePath = _.dirTempMake( _.pathJoin( __dirname, '../..' ) );
 
-function makeTestDir()
+console.log( basePath )
+
+_.mapOwnKeys( files )
+.forEach( ( name ) =>
 {
-  basePath = _.dirTempFor
-  ({
-    packageName : Self.name,
-    packagePath : _.pathResolve( _.pathRealMainDir(), '../../tmp.tmp' )
-  });
+  var path = _.pathJoin( basePath, name );
+  _.fileProvider.fileWrite( path, files[ name ] );
+});
 
-  basePath = _.fileProvider.pathNativize( basePath );
-
-  if( _.fileProvider.fileStat( basePath ) )
-  _.fileProvider.fileDelete( basePath );
-
-  _.fileProvider.directoryMake( basePath );
-
-  _.mapOwnKeys( files )
-  .forEach( ( name ) =>
-  {
-    var path = _.pathJoin( basePath, name );
-    _.fileProvider.fileWrite( path, files[ name ] );
-  });
-}
+//
 
 function cleanTestDir()
 {
@@ -362,7 +350,6 @@ var Proto =
   name : 'Maker',
   silencing : 1,
 
-  onSuiteBegin : makeTestDir,
   onSuiteEnd : cleanTestDir,
 
   tests :
