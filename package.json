@@ -17,7 +17,7 @@
   "license": "MIT",
   "main": "staging/dwtools/atop/maker/Maker.s",
   "files": [
-    "staging/dwtools/atop",
+    "staging/dwtools/atop/maker",
     "production"
   ],
   "directories": {

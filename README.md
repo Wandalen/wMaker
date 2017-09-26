@@ -1,7 +1,7 @@
 
 # wMaker [![Build Status](https://travis-ci.org/Wandalen/wMaker.svg?branch=master)](https://travis-ci.org/Wandalen/wMaker)
 
-Analog of so-called 'make' in Java Script.
+Analog of so-called 'form' in Java Script.
 
 ## Installation
 ```terminal
@@ -13,10 +13,10 @@ npm install wmaker
 |  Name 	|Type| Optional  	| Description  	|
 |---	|---	|---  |---  |
 |opt |object|*|Structure for storing user defined variables.
-|target|array|-|Array which stores make recipes.
+|target|array|-|Array which stores form recipes.
 |defaultTargetName|string|*|Make will run this target by default, useful with multiple recipes, if not specified first target in the structure will be default.
 |usingLogging|bool|*|Enable logging of making process, enabled by default.
-|currentPath|string|*| Current working directory, by default is the folder where make script is located.
+|currentPath|string|*| Current working directory, by default is the folder where form script is located.
 
 <!-- #### Opt Description will be here-->
 
@@ -33,19 +33,19 @@ npm install wmaker
 ### Methods
 |  Name 	| Description  	|
 |---	|---	|
-|make|Runs default target using name specified as 'defaultTargetName' or as command line argument.
+|form|Runs default target using name specified as 'defaultTargetName' or as command line argument.
 |makeTarget|Runs target using name passed as argument.
 
 ##### Example #1
 ```javascript
-/*simplest make target example using g++*/
+/*simplest form target example using g++*/
 var target =
 {
   after : 'my_file.o',
   before : 'my_file.cpp',
   shell : `g++ -c my_file.cpp -o my_file.o`
 }
-wMaker({ target : [ target ] }).make();
+wMaker({ recipe : [ target ] }).form();
 ```
 ##### Example #2
 ```javascript
@@ -70,7 +70,7 @@ var target =
   before : 'my_file.cpp',
   shell : `g++ -c my_file.cpp -o my_file.o`
 }
-wMaker({ target : [ target ] }).make();
+wMaker({ recipe : [ target ] }).form();
 ```
 ##### Example #3
 ```javascript
@@ -84,10 +84,10 @@ var target =
 }
 var maker = wMaker
 ({
-  target : [ target ],
-  defaultTargetName : '' /*disable default target execution by make()*/
+  recipe : [ target ],
+  defaultTargetName : '' /*disable default target execution by form()*/
 });
-maker.make(); /*run make to process provided target info*/
+maker.form(); /*run form to process provided target info*/
 maker.makeTarget( 't1' ); /*run recipe*/
 ```
 ##### Example #4
@@ -108,7 +108,7 @@ var target =
     shell : `g++ my_file.o -o my_file`
   }
 ]
-wMaker({ target : target }).make();
+wMaker({ recipe : target }).exec();
 ```
 ```terminal
 node my_make_file.js t1

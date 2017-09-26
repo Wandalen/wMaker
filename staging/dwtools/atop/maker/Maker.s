@@ -41,11 +41,11 @@ Self.nameShort = 'Maker';
 
 //
 
-function make()
+function form( targetName )
 {
   var self = this;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length <= 1 );
 
   if( !self.recipe )
   throw _.err( 'Maker expects ( recipe )' );
@@ -70,10 +70,24 @@ function make()
 
   self.targetsAdjust();
 
-  var nameOfTarget = process.argv[ 2 ] || self.defaultTargetName;
+  debugger
+
+  var nameOfTarget = targetName || self.defaultTargetName;
 
   if( nameOfTarget )
   return self.makeTarget( nameOfTarget );
+}
+
+//
+
+function exec()
+{
+  var self = this;
+
+  _.assert( arguments.length === 0 );
+
+  var targetName = _.appArgs().subject;
+  return self.form( targetName );
 }
 
 //
@@ -89,7 +103,7 @@ function makeTarget( recipe )
   if( _.strIs( recipe ) )
   {
     if( !self.env.tree.recipe[ recipe ] )
-    throw _.errBriefly( 'Recipe',recipe,'deos not exist!' );
+    throw _.errBriefly( 'Recipe',recipe,'does not exist!' );
     recipe = self.env.tree.recipe[ recipe ];
   }
 
@@ -329,7 +343,8 @@ function targetAdjust( recipe )
   /* */
 
   recipe.after = _.arrayAs( recipe.after );
-  recipe.before = _.arrayFlatten( recipe.before );
+  recipe.before = _.arrayAs( recipe.before );
+  recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
   recipe.beforeNodes = {};
   recipe.kind = 'recipe';
 
@@ -588,7 +603,8 @@ var Statics =
 var Proto =
 {
 
-  make : make,
+  form : form,
+  exec : exec,
   makeTarget : makeTarget,
   _makeTarget : _makeTarget,
   _makeTargetDependencies : _makeTargetDependencies,
