@@ -16,7 +16,7 @@ if( typeof module !== 'undefined' )
 {
 
   require( 'wTools' );
-  require ( 'wTesting' );
+  wTools.include( 'wTesting' );
   require( '../maker/Maker.s' )
 
 }
