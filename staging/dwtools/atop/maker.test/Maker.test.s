@@ -1,16 +1,6 @@
 ( function _Maker_test_s_( ) {
 
-'use strict';
-
-/*
-
-to run this test
-from the project directory run
-
-npm install
-node ./staging/dwtools/atop/z.test/Maker.test.s
-
-*/
+'use strict'; 
 
 if( typeof module !== 'undefined' )
 {
@@ -23,8 +13,9 @@ if( typeof module !== 'undefined' )
 
 var _ = wTools;
 var Parent = wTools.Testing;
-var Self = {};
 var fileProvider = _.FileProvider.HardDrive();
+
+//
 
 var files =
 {
@@ -343,8 +334,9 @@ var pathesFor = function( test )
   test.identical( got, expected );
 }
 
+//
 
-var Proto =
+var Self =
 {
 
   name : 'Maker',
@@ -371,8 +363,8 @@ var Proto =
 
 //
 
-_.mapExtend( Self,Proto );
 Self = wTestSuite( Self );
 if( typeof module !== 'undefined' && !module.parent )
 _.Tester.test( Self.name );
-} )( );
+
+})( );
