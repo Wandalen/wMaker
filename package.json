@@ -39,6 +39,7 @@
   "dependencies": {
     "wTools": "",
     "wtemplatetree": "",
+    "wtemplatetreeresolver" : "",
     "wLogger": ""
   },
   "devDependencies": {
