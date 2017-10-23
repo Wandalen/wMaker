@@ -18,7 +18,7 @@ if( typeof module !== 'undefined' )
   var _ = wTools;
 
   _.include( 'wFiles' );
-  _.include( 'wTemplateTree' );
+  _.include( 'wTemplateTreeResolver' );
   _.include( 'wLogger' );
 
 }
@@ -61,7 +61,7 @@ function form( targetName )
   self.fileProvider = _.FileProvider.HardDrive();
 
   if( !self.env )
-  self.env = wTemplateTree({ tree : { opt : self.opt, recipe : self.recipe } });
+  self.env = wTemplateTreeResolver({ tree : { opt : self.opt, recipe : self.recipe } });
 
   /* */
 
@@ -282,7 +282,7 @@ function targetsAdjust()
   }
   else if( _.arrayIs( self.env.tree.recipe ) )
   {
-    var result = {};
+    var result = Object.create( null );
     for( var t = 0 ; t < self.env.tree.recipe.length ; t++ )
     {
       var recipe = self.env.tree.recipe[ t ];
@@ -345,7 +345,7 @@ function targetAdjust( recipe )
   recipe.after = _.arrayAs( recipe.after );
   recipe.before = _.arrayAs( recipe.before );
   recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
-  recipe.beforeNodes = {};
+  recipe.beforeNodes = Object.create( null );
   recipe.kind = 'recipe';
 
   if( recipe.debug )
@@ -660,5 +660,7 @@ _.accessor( Self.prototype,
 //
 
 _global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
+if( typeof module !== 'undefined' && module !== null )
+module[ 'exports' ] = Self;
 
 })( );
