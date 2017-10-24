@@ -1,19 +1,33 @@
 ( function _Maker_test_s_( ) {
 
-'use strict'; 
+'use strict';
 
 if( typeof module !== 'undefined' )
 {
 
-  require( 'wTools' );
-  wTools.include( 'wTesting' );
+  if( typeof wBase === 'undefined' )
+  try
+  {
+    require( '../../Base.s' );
+  }
+  catch( err )
+  {
+    require( 'wTools' );
+  }
+
+  var _ = wTools;
+
+  _.include( 'wTesting' );
+
   require( '../maker/Maker.s' )
 
 }
 
+if( typeof module === 'undefined' )
+return;
+
 var _ = wTools;
 var Parent = wTools.Testing;
-var fileProvider = _.FileProvider.HardDrive();
 
 //
 
@@ -59,7 +73,7 @@ var pre = function pre()
 {
   var outPath = this.env.query( 'opt/outPath' );
   logger.log( 'outPath',outPath );
-  fileProvider.directoryMake( outPath );
+  _.fileProvider.directoryMake( outPath );
 };
 
 //
@@ -107,7 +121,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    var got = _.fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
     test.identical( got,true );
   })
   .ifNoErrorThen(function()
@@ -135,7 +149,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
+    var got = _.fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
     test.identical( got,true );
   });
 
@@ -152,7 +166,7 @@ var recipeRunCheck = function( test )
   var called = false;
   var pre = function(){ called = true; }
 
-  fileProvider.fileWriteAct
+  _.fileProvider.fileWriteAct
   ({
       filePath : file1,
       data : 'abc',
@@ -161,7 +175,7 @@ var recipeRunCheck = function( test )
   var con = _.timeOut( 1000 );
   con.doThen( function( )
   {
-    fileProvider.fileWriteAct
+    _.fileProvider.fileWriteAct
     ({
        filePath : file2,
        data : 'bca',
@@ -353,6 +367,7 @@ var Self =
     targetInvestigateUpToDate : targetInvestigateUpToDate,
 
     //etc
+
     pathesFor : pathesFor,
 
   },
@@ -367,4 +382,4 @@ Self = wTestSuite( Self );
 if( typeof module !== 'undefined' && !module.parent )
 _.Tester.test( Self.name );
 
-})( );
+})();
