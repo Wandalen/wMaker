@@ -5,27 +5,35 @@
 if( typeof module !== 'undefined' )
 {
 
-  if( typeof wBase === 'undefined' )
-  try
+  if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
-    require( '../../Base.s' );
-  }
-  catch( err )
-  {
-    require( 'wTools' );
+    let toolsPath = '../../../../dwtools/Base.s';
+    let toolsExternal = 0;
+    try
+    {
+      require.resolve( toolsPath )/*hhh*/;
+    }
+    catch( err )
+    {
+      toolsExternal = 1;
+      require( 'wTools' );
+    }
+    if( !toolsExternal )
+    require( toolsPath )/*hhh*/;
   }
 
-  var _ = wTools;
 
+  var _ = _global_.wTools;
+
+  _.include( 'wLogger' );
   _.include( 'wFiles' );
   _.include( 'wTemplateTreeResolver' );
-  _.include( 'wLogger' );
 
 }
 
 //
 
-var _ = wTools;
+var _ = _global_.wTools;
 var Parent = null;
 var Self = function wMaker( o )
 {
@@ -59,7 +67,7 @@ function form()
   maker.fileProvider = _.FileProvider.HardDrive();
 
   if( !maker.env )
-  maker.env = wTemplateTreeResolver({ tree : { opt : maker.opt, recipe : maker.recipe } });
+  maker.env = wTemplateTreeEnvironment({ tree : { opt : maker.opt, recipe : maker.recipies } });
 
   /* */
 
@@ -115,9 +123,9 @@ function recipeFor( recipe )
 
   if( _.strIs( recipe ) )
   {
-    if( !maker.env.tree.recipe[ recipe ] )
+    if( !maker.recipies[ recipe ] )
     throw _.errBriefly( 'Recipe',recipe,'does not exist!' );
-    recipe = maker.env.tree.recipe[ recipe ];
+    recipe = maker.recipies[ recipe ];
   }
 
   _.assert( recipe instanceof Self.Recipe );
@@ -142,6 +150,12 @@ function recipeNameGet( recipe )
   result = recipe.after.join( ',' );
   else throw _.err( 'no name for recipe',recipe );
 
+  // debugger;
+  // result = recipe.env.resolve( result );
+
+  if( !_.strIsNotEmpty( result ) )
+  debugger;
+
   if( !_.strIsNotEmpty( result ) )
   throw _.err( 'no name for recipe',recipe );
 
@@ -156,17 +170,15 @@ function recipesAdjust()
 
   /* */
 
-  if( _.objectIs( maker.env.tree.recipe ) )
-  for( var t in maker.env.tree.recipe )
+  if( _.objectIs( maker.recipies ) )
+  for( var t in maker.recipies )
   {
-
-    var recipe = maker.env.tree.recipe[ t ];
+    var recipe = maker.recipies[ t ];
 
     if( recipe.after === undefined )
     recipe.after = t;
 
     recipe.name = maker.recipeNameGet( recipe );
-
     if( t !== recipe.name )
     throw _.err( 'Name of recipe',recipe.name,'does not match key',t );
 
@@ -174,83 +186,120 @@ function recipesAdjust()
     maker.defaultRecipeName = recipe.name;
 
   }
-  else if( _.arrayIs( maker.env.tree.recipe ) )
+  else if( _.arrayIs( maker.recipies ) )
   {
     var result = Object.create( null );
-    for( var t = 0 ; t < maker.env.tree.recipe.length ; t++ )
+
+    for( var t = 0 ; t < maker.recipies.length ; t++ )
     {
-      var recipe = maker.env.tree.recipe[ t ];
+      var recipe = maker.recipies[ t ];
 
       recipe.name = maker.recipeNameGet( recipe );
       result[ recipe.name ] = recipe;
 
       if( maker.defaultRecipeName === null )
       maker.defaultRecipeName = recipe.name;
-
     }
 
-    maker.env.tree.recipe = result;
+    maker.recipies = result;
   }
 
   /* */
 
-  if( !_.objectIs( maker.env.tree.recipe ) )
-  throw _.err( 'Maker expects map of targets ( recipe )' )
+  if( !_.objectIs( maker.recipies ) )
+  throw _.err( 'Maker expects map ( recipe )' )
 
-  // for( var t in maker.env.tree.recipe )
-  // maker.targetAdjust( maker.env.tree.recipe[ t ] );
-
-  for( var t in maker.env.tree.recipe )
+  for( var t in maker.recipies )
   {
-    var recipe = maker.env.tree.recipe[ t ] = new maker.Recipe( maker.env.tree.recipe[ t ] );
+    var recipe = maker.recipies[ t ] = new maker.Recipe( maker.recipies[ t ] );
     recipe.maker = maker;
   }
 
-  for( var t in maker.env.tree.recipe )
+  for( var t in maker.recipies )
   {
-    var recipe = maker.env.tree.recipe[ t ];
+    var recipe = maker.recipies[ t ];
+    recipe.preform();
+  }
+
+  for( var t in maker.recipies )
+  {
+    var recipe = maker.recipies[ t ];
     recipe.form();
   }
 
-  maker.env.resolveAndAssign();
+  // maker.env.resolveAndAssign();
 
+}
+
+//
+
+function recipyWithBefore( before )
+{
+  var maker = this;
+
+  _.assert( arguments.length === 1 );
+  _.assert( _.strIs( before ) || _.arrayIs( before ) );
+
+  if( _.arrayIs( before ) )
+  {
+    var result = [];
+    for( var b = 0 ; b < before.length ; b++ )
+    {
+      var r = maker.recipyWithBefore( before[ b ] );
+      _.arrayAppendArray( result,r );
+      return result;
+    }
+  }
+
+  for( var r in maker.recipies )
+  {
+    var recipe = maker.recipies[ r ];
+    var name = recipe.env.resolve( recipe.name );
+
+    if( name === before )
+    return [ recipe ];
+    else if( recipe.hasAfter( before ) )
+    return [ recipe ];
+
+  }
+
+  return [];
 }
 
 // --
 // etc
 // --
 
-function pathesFor( pathes )
-{
-  var maker = this;
-
-  _.assert( arguments.length === 1 );
-  _.assert( _.arrayIs( pathes ) || _.strIs( pathes ) );
-
-  // console.log( 'pathes',pathes );
-  // debugger;
-
-  if( _.arrayIs( pathes ) )
-  {
-    var result = [];
-    for( var p = 0 ; p < pathes.length ; p++ )
-    result[ p ] = maker.pathesFor( pathes[ p ] )[ 0 ];
-    return result;
-  }
-
-  //
-
-  var result = pathes;
-
-  result = maker.env.resolve( result );
-
-  if( _.arrayIs( result ) )
-  return maker.pathesFor( result );
-
-  result = _.pathResolve( maker.currentPath,result );
-
-  return [ result ];
-}
+// function pathsFor( paths )
+// {
+//   var maker = this;
+//
+//   _.assert( arguments.length === 1 );
+//   _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
+//
+//   /* */
+//
+//   if( _.arrayIs( paths ) )
+//   {
+//     var result = [];
+//     for( var p = 0 ; p < paths.length ; p++ )
+//     result[ p ] = maker.pathsFor( paths[ p ] )[ 0 ];
+//     return result;
+//   }
+//
+//   /* */
+//
+//   var result = paths;
+//
+//   result = maker.env.resolve( result );
+//
+//   if( _.arrayIs( result ) )
+//   return maker.pathsFor( result );
+//
+//   result = _.pathResolve( maker.currentPath,result );
+//
+//   return [ result ];
+// }
 
 //
 
@@ -267,14 +316,14 @@ function _optSet( src )
 
 //
 
-function _recipeSet( src )
+function _recipiesSet( src )
 {
   var maker = this;
 
-  maker[ recipeSymbol ] = src;
+  maker[ recipiesSymbol ] = src;
 
   if( maker.env )
-  maker.env.tree.recipe = src;
+  maker.env.tree.recipies = src;
 
 }
 
@@ -322,7 +371,7 @@ var RecipeFields =
 // --
 
 var optSymbol = Symbol.for( 'opt' );
-var recipeSymbol = Symbol.for( 'recipe' );
+var recipiesSymbol = Symbol.for( 'recipies' );
 
 var Composes =
 {
@@ -335,7 +384,7 @@ var Composes =
 var Aggregates =
 {
   opt : null,
-  recipe : null,
+  recipies : null,
 }
 
 var Associates =
@@ -356,12 +405,14 @@ var Statics =
 var Accessors =
 {
   opt : 'opt',
-  recipe : 'recipe',
+  recipies : 'recipies',
 }
 
 var Forbids =
 {
   target : 'target',
+  recipe : 'recipe',
+  recipy : 'recipy',
 }
 
 // --
@@ -379,12 +430,14 @@ var Proto =
   recipeNameGet : recipeNameGet,
   recipesAdjust : recipesAdjust,
 
+  recipyWithBefore : recipyWithBefore,
+
 
   // etc
 
-  pathesFor : pathesFor,
+  // pathsFor : pathsFor,
   _optSet : _optSet,
-  _recipeSet : _recipeSet,
+  _recipiesSet : _recipiesSet,
 
 
   //
@@ -407,7 +460,7 @@ _.classMake
   parent : Parent,
 });
 
-wCopyable.mixin( Self );
+_.Copyable.mixin( Self );
 
 _.accessor( Self.prototype,Accessors );
 _.accessor( Self.prototype,Forbids );
@@ -424,7 +477,7 @@ _.prototypeCrossRefer
 
 //
 
-_global_[ Self.name ] = wTools[ Self.nameShort ] = Self;
+_global_[ Self.name ] = _[ Self.nameShort ] = Self;
 if( typeof module !== 'undefined' && module !== null )
 module[ 'exports' ] = Self;
 

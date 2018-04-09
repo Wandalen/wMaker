@@ -4,7 +4,7 @@
 
 //
 
-var _ = wTools;
+var _ = _global_.wTools;
 var Parent = null;
 var Self = function wRecipe( o )
 {
@@ -22,22 +22,58 @@ Self.nameShort = 'Recipe';
 //
 // --
 
+function preform()
+{
+  var recipe = this;
+  var maker = recipe.maker;
+
+  _.assert( arguments.length === 0 );
+  _.assert( !recipe._formed );
+  _.assert( !recipe._preformed );
+
+  if( !recipe.env )
+  recipe.env = wTemplateTreeResolver({ tree : { opt : maker.opt, recipe : recipe, recipies : maker.recipies } });
+
+  recipe._preformed = 1;
+}
+
+//
+
 function form()
 {
   var recipe = this;
   var maker = recipe.maker;
 
-  // debugger; xxx
+  // if( recipe.kind === 'file' )
+  // debugger;
+
+  // if( !recipe.env )
+  // recipe.env = wTemplateTreeResolver({ tree : { opt : maker.opt, recipe : recipe, recipies : maker.recipies } });
+
+  if( !recipe._preformed )
+  recipe.preform();
 
   /* verification */
 
   _.assert( maker,'expects { maker }' );
   _.assert( arguments.length === 0 );
   _.assert( !recipe._formed );
+  // _.assert( recipe._preformed );
+
+  // if( !recipe.name )
+  // recipe.name = maker.recipeNameGet( recipe );
+
+  // _.assert( recipe.name === maker.recipeNameGet( recipe ) );
 
   // var but = _.mapKeys( _.mapBut( recipe,maker.RecipeFields[ 'recipe' ] ) );
   // if( but.length )
   // throw _.err( 'Recipe',recipe.name,'should not have fields',but );
+
+  if( !_.strIsNotEmpty( recipe.name ) )
+  debugger;
+
+  if( !_.strIsNotEmpty( recipe.name ) )
+  throw _.err( 'Recipe','expects string { name }' );
 
   if( recipe.shell && !_.strIs( recipe.shell ) )
   throw _.err( 'Recipe',recipe.name,'expects string { shell }' );
@@ -51,79 +87,171 @@ function form()
   if( recipe.after && !_.arrayIs( recipe.after ) && !_.strIs( recipe.after ) )
   throw _.err( 'Recipe',recipe.name,'expects string or array { recipe }' );
 
+  if( recipe.kind === 'recipe' )
   if( !_.arrayIs( recipe.before ) && !_.strIs( recipe.before ) )
   throw _.err( 'Recipe',recipe.name,'expects array or string { before }' );
 
-  // if( recipe.kind !== '' )
-  // throw _.err( 'Recipe',recipe.name,'should not have { kind }' );
+  if( !_.arrayHas( recipe.Kind , recipe.kind ) )
+  throw _.err( 'Recipe',recipe.name,'should have known { kind }, but have',recipe.kind );
 
   /* */
-
-  if( !recipe.beforeDirs )
-  recipe.beforeDirs = [];
-  else
-  recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
-
-  recipe.after = _.arrayAs( recipe.after );
-  // recipe.before = _.arrayAs( recipe.before );
-  recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
-  recipe.beforeNodes = Object.create( null );
-  recipe.afterNodes = Object.create( null );
-  // recipe.kind = 'recipe';
 
   if( recipe.debug )
   debugger;
 
-  for( var d = 0 ; d < recipe.before.length ; d++ )
+  if( !recipe.env )
+  recipe.env = wTemplateTreeResolver({ tree : { opt : maker.opt, recipe : recipe, recipies : maker.recipies } });
+
+  if( recipe.kind === 'recipe' )
   {
-    var name = recipe.before[ d ];
 
-    if( recipe.beforeNodes[ name ] )
-    throw _.err( 'Taget',recipe.name,'already has dependency',name );
+    if( !recipe.beforeDirs )
+    recipe.beforeDirs = [];
+    else
+    recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
 
-    recipe.beforeNodes[ name ] = recipe.subFrom( name );
+    recipe.after = _.arrayAs( recipe.after );
+    recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
+    recipe.beforeNodes = Object.create( null );
+    recipe.afterNodes = Object.create( null );
+
+    for( var d = 0 ; d < recipe.before.length ; d++ )
+    {
+      var before = recipe.before[ d ];
+
+      if( recipe.beforeNodes[ before ] )
+      throw _.err( 'Taget',recipe.name,'already has dependency',before );
+
+      // recipe.beforeNodes[ before ] = recipe.subFrom( before );
+      recipe.subFrom( before,recipe.beforeNodes );
+    }
+
+    /* validation */
+
+    _.assert( _.arrayIs( recipe.after ) );
+    _.assert( _.arrayIs( recipe.before ) );
 
   }
 
-  /* validation */
-
-  _.assert( _.arrayIs( recipe.after ) );
-  _.assert( _.arrayIs( recipe.before ) );
-  // _.assertMapHasOnly( recipe,maker.RecipeFields[ 'recipe processed' ] );
+  _.assert( recipe.env );
 
   recipe._formed = 1;
+
+  return recipe;
 }
 
 //
 
-function subFrom( name )
+function hasAfter( after )
 {
   var recipe = this;
   var maker = recipe.maker;
-  var subRecipe;
+
+  _.assert( arguments.length === 1 );
+  _.assert( _.strIs( after ) );
+  _.assert( recipe.env );
+
+  for( var a = 0 ; a < recipe.after.length ; a++ )
+  {
+    if( recipe.after[ a ] === '' )
+    continue;
+
+    var rafter = recipe.env.resolve( recipe.after[ a ] )
+
+    _.assert( _.strIs( rafter ) );
+
+    if( after === rafter )
+    return true;
+  }
+
+  return false;
+}
+
+//
+
+function subFrom( name,nodes )
+{
+  var recipe = this;
+  var maker = recipe.maker;
+  var result;
 
   // debugger;
 
-  _.assert( arguments.length === 1 );
-
   // var name = recipe.before[ d ];
-  // var subRecipe = map[ name ];
-  // if( subRecipe )
+  // var result = map[ name ];
+  // if( result )
   // throw _.err( 'Taget',recipe.name,'already has dependency',name );
 
-  if( maker.env.tree.recipe[ name ] )
-  subRecipe = maker.env.tree.recipe[ name ];
-  else
-  subRecipe = Self({ kind : 'file', _filePath : name, _dirs : recipe.beforeDirs, maker : maker });
+  // debugger;
+
+  // if( _.arrayIs( name ) )
+  // name = name.join( ';' );
+
+  _.assert( _.strIsNotEmpty( name ),'expects string { name }' )
+  _.assert( arguments.length === 2 );
+
+  var before = recipe.env.resolve( name );
+
+  if( name === '{{recipe/opt/outBuildPath}}/main.o' )
+  debugger;
+
+  result = maker.recipyWithBefore( before );
+
+  if( !result.length )
+  {
+    result = [ new recipe.Self
+    ({
+      kind : 'file',
+      name : name,
+      _filePath : name,
+      _dirs : recipe.beforeDirs,
+      opt : recipe.opt,
+      maker : maker,
+    }).form() ];
+  }
+
+  _.assert( result.length > 0 );
+
+  // debugger;
+  for( var r = 0 ; r < result.length ; r++ )
+  {
+    var node = result[ r ];
+    _.assert( !nodes[ node.name ],'already has node',node.name );
+    nodes[ node.name ] = node;
+  }
+
+  // if( maker.recipies[ name ] )
+  // subRecipe = maker.recipies[ name ];
+  // else
+  // subRecipe = new recipe.Self
+  // ({
+  //   kind : 'file',
+  //   name : name,
+  //   _filePath : name,
+  //   _dirs : recipe.beforeDirs,
+  //   opt : recipe.opt,
+  //   maker : maker,
+  // }).form();
+
+  // else
+  // subRecipe = recipe.Self
+  // ({
+  //   kind : 'file',
+  //   name : name,
+  //   _filePath : name,
+  //   _dirs : recipe.beforeDirs,
+  //   env : recipe.env,
+  //   maker : maker,
+  // }).form();
 
   // recipe.beforeNodes[ name ] = { kind : 'file', filePath : name, dirs : recipe.beforeDirs };
 
-  _.assert( subRecipe instanceof Self );
-  _.assert( subRecipe.kind );
+  // _.assert( subRecipe instanceof Self );
+  // _.assert( subRecipe.kind );
 
   // debugger;
 
-  return subRecipe;
+  // return subRecipe;
 }
 
 //
@@ -137,12 +265,12 @@ function isDone()
 
   _.assert( arguments.length === 0 );
 
-  var pathes = maker.pathesFor( recipe.after );
+  var paths = recipe.pathsFor( recipe.after );
   for( var a = 0 ; a < recipe.after.length ; a++ )
   {
-    if( !maker.fileProvider.fileStat( pathes[ a ] ) )
+    if( !maker.fileProvider.fileStat( paths[ a ] ) )
     {
-      result.missing = pathes[ a ];
+      result.missing = paths[ a ];
       return result;
     }
   }
@@ -216,20 +344,16 @@ function investigateUpToDateFile( file )
   if( file.upToDate !== undefined )
   {
     var result = file.upToDate;
-    // debugger;
-    // logger.log( '! investigateUpToDateFile',recipe.after,':',result );
     return result;
   }
 
-  var dst = maker.pathesFor( recipe.after );
-  var src = maker.pathesFor( file._filePath );
+  var dst = recipe.pathsFor( recipe.after );
+  var src = recipe.pathsFor( file._filePath );
 
   var result = maker.fileProvider.filesAreUpToDate( dst,src );
 
   if( maker.verbosity > 1 )
-  // if( !result )
   logger.log( 'investigateUpToDateFile(',recipe.after.join( ',' ),') :',result );
-  // logger.log( 'investigateUpToDateFile(',dst,'<-',src,') :',result );
 
   return result;
 }
@@ -240,19 +364,9 @@ function makeTarget()
 {
   var recipe = this;
   var maker = recipe.maker;
-  var con = new wConsequence();
+  var con = new _.Consequence();
 
   _.assert( arguments.length === 0 );
-  // console.log( 'maker.env.tree',maker.env.tree );
-
-  // if( _.strIs( recipe ) )
-  // {
-  //   if( !maker.env.tree.recipe[ recipe ] )
-  //   throw _.errBriefly( 'Recipe',recipe,'does not exist!' );
-  //   recipe = maker.env.tree.recipe[ recipe ];
-  // }
-
-  // logger.log( 'making recipe',recipe.name,recipe );
 
   if( recipe.investigateUpToDate() )
   {
@@ -269,15 +383,17 @@ function _makeTarget()
 {
   var recipe = this;
   var maker = recipe.maker;
-  var con = new wConsequence().give();
+  var con = new _.Consequence().give();
 
   _.assert( arguments.length === 0 );
 
-  if( _.strIs( recipe ) )
-  recipe = maker.env.tree.recipe[ recipe ];
+  // if( _.strIs( recipe ) )
+  // recipe = maker.recipies[ recipe ];
 
   if( maker.verbosity )
-  logger.logUp( 'making recipe',maker.env.resolve( recipe.name ) );
+  logger.logUp( 'making recipe',recipe.env.resolve( recipe.name ) );
+
+  // debugger;
 
   if( recipe.upToDate )
   {
@@ -305,11 +421,12 @@ function _makeTarget()
     if( recipe.shell )
     return _.shell
     ({
-      path : maker.env.resolve( recipe.shell ),
-      throwingBadExitCode : 1,
+      path : recipe.env.resolve( recipe.shell ),
+      throwingExitCode : 1,
       applyingExitCode : 1,
       outputColoring : 1,
       outputPrefixing : 1,
+      stdio : 'inherit',
     });
   });
 
@@ -339,6 +456,9 @@ function _makeTarget()
   con.doThen( function( err,data )
   {
 
+    if( maker.verbosity )
+    logger.log( 'done recipe',recipe.env.resolve( recipe.name ) );
+
     if( err )
     {
       debugger;
@@ -367,6 +487,8 @@ function _makeTargetDependencies( con )
 
   /* */
 
+  // debugger;
+
   for( var d in recipe.beforeNodes )
   {
     var node = recipe.beforeNodes[ d ];
@@ -382,10 +504,7 @@ function _makeTargetDependencies( con )
     }
     else if( node.kind === 'file' )
     {
-      // if( !maker.fileProvider.fileStat( maker.pathesFor( node._filePath )[ 0 ] ) )
-      // if( !recipe.filesExist( node._filePath , node._dirs ) )
-      if( !node.filesExist() )
-      throw _.err( 'not made :',node._filePath );
+      node.filesMissedWithError();
     }
     else throw _.err( 'unknown recipe kind',recipe.kind );
 
@@ -396,31 +515,140 @@ function _makeTargetDependencies( con )
 
 //
 
-function filesExist()
+function filesMissed()
 {
   var recipe = this;
   var maker = recipe.maker;
-  var dirs = recipe._dirs.length ? recipe._dirs : [ '.' ];
+  var dirs = recipe._dirs && recipe._dirs.length ? recipe._dirs : [ '.' ];
   var path = recipe._filePath;
 
   _.assert( arguments.length === 0 );
 
+  var notMade = [];
+  // var paths = recipe.pathsFor( path );
+
   for( var d = 0 ; d < dirs.length ; d++ )
   {
-    var pathes = maker.pathesFor( _.pathJoin( dirs[ d ],path ) );
 
-    _.assert( pathes.length >= 1,'not tested' );
+    // if( path === '{{opt/containerHpp}}' )
+    // debugger;
+    // debugger;
 
-    for( var f = 0 ; f < pathes.length ; f++ )
-    if( !maker.fileProvider.fileStat( pathes[ f ] ) )
-    break;
+    // var paths = maker.pathsFor( _.pathJoin( dirs[ d ],path ) );
+    // var paths = maker.pathsFor( path );
+    // paths = _.pathsJoin( dirs[ d ],paths );
 
-    if( f === pathes.length )
-    return true;
+    var paths = recipe._pathsFor( path,dirs[ d ] );
+
+    if( _.strIs( paths ) )
+    paths = [ paths ];
+
+    _.assert( _.arrayIs( paths ) );
+    _.assert( paths.length >= 1,'not tested' );
+
+    for( var f = 0 ; f < paths.length ; f++ )
+    if( !maker.fileProvider.fileStat( paths[ f ] ) )
+    {
+      debugger;
+      notMade.push( paths[ f ] );
+      break;
+    }
+
+    if( f === paths.length )
+    return [];
 
   }
 
+  return notMade;
+}
+
+//
+
+function filesMissedWithError()
+{
+  var recipe = this;
+  var maker = recipe.maker;
+
+  _.assert( arguments.length === 0 );
+
+  var notMade = recipe.filesMissed();
+
+  if( notMade.length === 0 )
+  return notMade;
+
+  var notMadeStr = notMade.join( '\n' );
+  throw _.err( 'not made recipe',recipe._filePath,'\nmissed files :\n',notMadeStr );
+
   return false;
+}
+
+//
+
+function pathsFor( paths )
+{
+  var recipe = this;
+  var maker = recipe.maker;
+
+  // var result = [];
+  // debugger;
+  // var dirs = ( recipe._dirs && recipe._dirs.length ) ? recipe._dirs : [ '.' ];
+
+  _.assert( arguments.length === 1 );
+
+  /* */
+
+  // for( var d = 0 ; d < dirs.length ; d++ )
+  // {
+  //   var paths = recipe._pathsFor( paths,dirs[ d ] );
+  //   if( dirs.length > 1 )
+  //   result.push( paths );
+  //   else
+  //   result = paths;
+  // }
+
+  var result = recipe._pathsFor( paths,'.' );
+
+  return result;
+}
+
+//
+
+function _pathsFor( paths,dir )
+{
+  var recipe = this;
+  var maker = recipe.maker;
+
+  _.assert( arguments.length === 2 );
+  _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
+
+  /* */
+
+  if( _.arrayIs( paths ) )
+  {
+    var result = [];
+    for( var p = 0 ; p < paths.length ; p++ )
+    result[ p ] = recipe._pathsFor( paths[ p ],dir )[ 0 ];
+    return result;
+  }
+
+  /* */
+
+  var result = paths;
+
+  _.assert( recipe.env );
+
+  result = recipe.env.resolve( result );
+  result = _.pathsJoin( dir,result );
+
+  // if( _.strIs( paths ) )
+  // paths = [ paths ];
+
+  if( _.arrayIs( result ) )
+  return recipe._pathsFor( result,dir );
+
+  result = _.pathResolve( maker.currentPath,result );
+
+  return [ result ];
 }
 
 // --
@@ -429,6 +657,7 @@ function filesExist()
 
 var Composes =
 {
+
   name : null,
 
   shell : null,
@@ -438,6 +667,8 @@ var Composes =
   post : null,
   debug : 0,
   beforeDirs : null,
+
+  opt : null,
 
   kind : 'recipe',
   beforeNodes : null,
@@ -456,15 +687,18 @@ var Aggregates =
 var Associates =
 {
   maker : null,
+  env : null,
 }
 
 var Restricts =
 {
+  _preformed : 0,
   _formed : 0,
 }
 
 var Statics =
 {
+  Kind : [ 'recipe','file' ],
 }
 
 var Forbids =
@@ -479,7 +713,10 @@ var Forbids =
 var Proto =
 {
 
+  preform : preform,
   form : form,
+
+  hasAfter : hasAfter,
 
   subFrom : subFrom,
 
@@ -494,7 +731,11 @@ var Proto =
   _makeTarget : _makeTarget,
   _makeTargetDependencies : _makeTargetDependencies,
 
-  filesExist : filesExist,
+  filesMissed : filesMissed,
+  filesMissedWithError : filesMissedWithError,
+
+  pathsFor : pathsFor,
+  _pathsFor : _pathsFor,
 
   //
 
@@ -516,7 +757,7 @@ _.classMake
   parent : Parent,
 });
 
-wCopyable.mixin( Self );
+_.Copyable.mixin( Self );
 
 _.accessorForbid( Self.prototype,Forbids );
 

@@ -5,17 +5,24 @@
 if( typeof module !== 'undefined' )
 {
 
-  if( typeof wBase === 'undefined' )
-  try
+  if( typeof _global_ === 'undefined' || !_global_.wBase )
   {
-    require( '../../Base.s' );
-  }
-  catch( err )
-  {
-    require( 'wTools' );
+    let toolsPath = '../../dwtools/Base.s';
+    let toolsExternal = 0;
+    try
+    {
+      require.resolve( toolsPath )/*hhh*/;
+    }
+    catch( err )
+    {
+      toolsExternal = 1;
+      require( 'wTools' );
+    }
+    if( !toolsExternal )
+    require( toolsPath )/*hhh*/;
   }
 
-  var _ = wTools;
+  var _ = _global_.wTools;
 
   _.include( 'wTesting' );
 
@@ -26,8 +33,8 @@ if( typeof module !== 'undefined' )
 if( typeof module === 'undefined' )
 return;
 
-var _ = wTools;
-var Parent = wTools.Testing;
+var _ = _global_.wTools;
+var Parent = _.Testing;
 
 //
 
@@ -110,7 +117,7 @@ var simplest = function( test )
     recipe : recipe,
   };
 
-  var con = new wConsequence().give();
+  var con = new _.Consequence().give();
 
   con.ifNoErrorThen(function()
   {
@@ -356,7 +363,7 @@ var Self =
   name : 'Maker',
   silencing : 1,
 
-  onSuiteEnd : cleanTestDir,
+  onSuitEnd : cleanTestDir,
 
   tests :
   {
@@ -378,7 +385,7 @@ var Self =
 
 //
 
-Self = wTestSuite( Self );
+Self = wTestSuit( Self );
 if( typeof module !== 'undefined' && !module.parent )
 _.Tester.test( Self.name );
 
