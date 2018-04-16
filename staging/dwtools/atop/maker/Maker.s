@@ -28,6 +28,7 @@ if( typeof module !== 'undefined' )
   _.include( 'wLogger' );
   _.include( 'wFiles' );
   _.include( 'wTemplateTreeResolver' );
+  _.include( 'wTemplateTreeEnvironment' );
 
 }
 

@@ -56,22 +56,27 @@ var files =
   }`
 }
 
-var basePath = _.dirTempMake( _.pathJoin( __dirname, '../..' ) );
+var basePath;
 
-console.log( basePath )
+//
 
-_.mapOwnKeys( files )
-.forEach( ( name ) =>
+function testDirMake()
 {
-  var path = _.pathJoin( basePath, name );
-  _.fileProvider.fileWrite( path, files[ name ] );
-});
+  basePath = _.dirTempMake( _.pathJoin( __dirname, '../..' ) );
+
+  _.mapOwnKeys( files )
+  .forEach( ( name ) =>
+  {
+    var path = _.pathJoin( basePath, name );
+    _.fileProvider.fileWrite( path, files[ name ] );
+  });
+}
 
 //
 
 function cleanTestDir()
 {
-  _.fileProvider.fileDelete( basePath );
+  _.fileProvider.filesDelete( basePath );
 }
 
 //
@@ -114,7 +119,7 @@ var simplest = function( test )
   var o =
   {
     opt : opt,
-    recipe : recipe,
+    recipies : recipe,
   };
 
   var con = new _.Consequence().give();
@@ -128,7 +133,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    var got = _.fileProvider.fileStat( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
     test.identical( got,true );
   })
   .ifNoErrorThen(function()
@@ -148,7 +153,7 @@ var simplest = function( test )
     var o =
     {
       opt : opt,
-      recipe : recipe,
+      recipies : recipe,
     };
 
     var con = wMaker( o ).form();
@@ -156,7 +161,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStatAct( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
+    var got = _.fileProvider.fileStat( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
     test.identical( got,true );
   });
 
@@ -173,7 +178,7 @@ var recipeRunCheck = function( test )
   var called = false;
   var pre = function(){ called = true; }
 
-  _.fileProvider.fileWriteAct
+  _.fileProvider.fileWrite
   ({
       filePath : file1,
       data : 'abc',
@@ -182,7 +187,7 @@ var recipeRunCheck = function( test )
   var con = _.timeOut( 1000 );
   con.doThen( function( )
   {
-    _.fileProvider.fileWriteAct
+    _.fileProvider.fileWrite
     ({
        filePath : file2,
        data : 'bca',
@@ -201,7 +206,7 @@ var recipeRunCheck = function( test )
         pre : pre
       }
     ];
-    var con = wMaker({ recipe : recipe }).form();
+    var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -222,7 +227,7 @@ var recipeRunCheck = function( test )
       }
     ];
     test.description = 'after is newer then before';
-    var con = wMaker({ recipe : recipe }).form();
+    var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -241,7 +246,7 @@ var recipeRunCheck = function( test )
       }
     ];
     test.description = 'after == newer';
-    var con = wMaker({ recipe : recipe }).form();
+    var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
   .ifNoErrorThen( function()
@@ -271,7 +276,7 @@ var targetsAdjust = function( test )
     }
   ];
 
-  var maker = wMaker({ recipe : recipe, defaultTargetName : '' });
+  var maker = wMaker({ recipies : recipe, defaultRecipeName : 'second' });
   maker.form();
   recipe = maker.env.tree.recipe;
   var got = [ recipe.first.beforeNodes, recipe.second.beforeNodes ];
@@ -310,14 +315,15 @@ var targetInvestigateUpToDate = function( test )
       name : 'test2',
       after : `{{opt/basePath}}`,
       before : [ `{{opt/basePath}}` ],
+      opt : opt
     }
   ];
 
   test.description = "compare two indentical files";
-  var maker = wMaker({ opt : opt, recipe : recipe, defaultTargetName : '' });
+  var maker = wMaker({ opt : opt, recipies : recipe });
   maker.form();
-  var t = maker.env.tree.recipe[ recipe[ 0 ].name ];
-  var got = maker.targetInvestigateUpToDate( t );
+  var t = maker.recipies[ recipe[ 0 ].name ];
+  var got = t.upToDate;
   test.identical( got, true );
 
   test.description = "compare src with output";
@@ -327,12 +333,13 @@ var targetInvestigateUpToDate = function( test )
       name : 'test3',
       after : `{{opt/basePath}}/1.o`,
       before : [ `{{opt/basePath}}` ],
+      opt : opt
     }
   ];
-  var maker = wMaker({ opt : opt, recipe : recipe, defaultTargetName : '' });
+  var maker = wMaker({ opt : opt, recipies : recipe, defaultRecipeName : 'test3' });
   maker.form();
-  var t = maker.env.tree.recipe[ recipe[ 0 ].name ];
-  var got = maker.targetInvestigateUpToDate( t );
+  var t = maker.recipies[ recipe[ 0 ].name ];
+  var got = t.upToDate
   test.identical( got, false );
 }
 
@@ -341,9 +348,10 @@ var targetInvestigateUpToDate = function( test )
 var pathesFor = function( test )
 {
   test.description = "check if relative pathes are generated correctly";
-  var maker = wMaker({ recipe : {}, defaultTargetName : '' });
+  var maker = wMaker({ recipies : [ { name : 'test', before : [] } ] });
   maker.form();
-  var got = maker.pathesFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
+  var recipe = maker.recipies[ 'test' ];
+  var got = recipe.pathsFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
   var currentDir = _.pathRealMainDir();
   var expected =
   [
@@ -363,6 +371,7 @@ var Self =
   name : 'Maker',
   silencing : 1,
 
+  onSuitBegin : testDirMake,
   onSuitEnd : cleanTestDir,
 
   tests :
