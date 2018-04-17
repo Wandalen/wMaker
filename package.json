@@ -37,10 +37,11 @@
     "url": "https://github.com/Wandalen/wMaker/issues"
   },
   "dependencies": {
+    "wLogger": "",
     "wTools": "",
     "wtemplatetree": "",
-    "wtemplatetreeresolver": "",
-    "wLogger": ""
+    "wtemplatetreeenvironment": "",
+    "wtemplatetreeresolver": ""
   },
   "devDependencies": {
     "wTesting": "",
