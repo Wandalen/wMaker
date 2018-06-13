@@ -707,7 +707,7 @@ var Forbids =
 }
 
 // --
-// proto
+// define class
 // --
 
 var Proto =
