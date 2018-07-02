@@ -188,7 +188,7 @@ function subFrom( name,nodes )
   // name = name.join( ';' );
 
   _.assert( _.strIsNotEmpty( name ),'expects string { name }' )
-  _.assert( arguments.length === 2, 'expects exactly two argument' );
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
 
   var before = recipe.env.resolve( name );
 
@@ -618,7 +618,7 @@ function _pathsFor( paths,dir )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 2, 'expects exactly two argument' );
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
   _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
 
   /* */
