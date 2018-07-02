@@ -147,7 +147,7 @@ function hasAfter( after )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
   _.assert( _.strIs( after ) );
   _.assert( recipe.env );
 
@@ -188,7 +188,7 @@ function subFrom( name,nodes )
   // name = name.join( ';' );
 
   _.assert( _.strIsNotEmpty( name ),'expects string { name }' )
-  _.assert( arguments.length === 2 );
+  _.assert( arguments.length === 2, 'expects exactly two argument' );
 
   var before = recipe.env.resolve( name );
 
@@ -295,7 +295,7 @@ function _investigateUpToDate( parent )
   var recipe = this;
   var result = true;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
   if( recipe.kind === 'recipe' )
   result = recipe.investigateUpToDateRecipe() && result;
@@ -339,7 +339,7 @@ function investigateUpToDateFile( file )
   var maker = recipe.maker;
 
   _.assert( recipe );
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
   if( file.upToDate !== undefined )
   {
@@ -483,7 +483,7 @@ function _makeTargetDependencies( con )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
   /* */
 
@@ -593,7 +593,7 @@ function pathsFor( paths )
   // debugger;
   // var dirs = ( recipe._dirs && recipe._dirs.length ) ? recipe._dirs : [ '.' ];
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'expects single argument' );
 
   /* */
 
@@ -618,7 +618,7 @@ function _pathsFor( paths,dir )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 2 );
+  _.assert( arguments.length === 2, 'expects exactly two argument' );
   _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
 
   /* */
