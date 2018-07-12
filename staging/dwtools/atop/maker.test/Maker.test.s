@@ -126,7 +126,7 @@ var simplest = function( test )
 
   con.ifNoErrorThen(function()
   {
-    test.description = 'simple make';
+    test.case = 'simple make';
     debugger
     var con = wMaker( o ).form();
     return test.shouldMessageOnlyOnce( con );
@@ -138,7 +138,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    test.description = "try to make obj file ";
+    test.case = "try to make obj file ";
 
     var recipe =
     [
@@ -196,7 +196,7 @@ var recipeRunCheck = function( test )
   })
   .ifNoErrorThen( function()
   {
-    test.description = 'after is older then before';
+    test.case = 'after is older then before';
     var recipe =
     [
       {
@@ -226,7 +226,7 @@ var recipeRunCheck = function( test )
         pre : pre
       }
     ];
-    test.description = 'after is newer then before';
+    test.case = 'after is newer then before';
     var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
@@ -245,7 +245,7 @@ var recipeRunCheck = function( test )
         pre : pre
       }
     ];
-    test.description = 'after == newer';
+    test.case = 'after == newer';
     var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
@@ -261,7 +261,7 @@ var recipeRunCheck = function( test )
 
 var targetsAdjust = function( test )
 {
-  test.description = "check targets dependencies";
+  test.case = "check targets dependencies";
   var recipe =
   [
     {
@@ -319,14 +319,14 @@ var targetInvestigateUpToDate = function( test )
     }
   ];
 
-  test.description = "compare two indentical files";
+  test.case = "compare two indentical files";
   var maker = wMaker({ opt : opt, recipies : recipe });
   maker.form();
   var t = maker.recipies[ recipe[ 0 ].name ];
   var got = t.upToDate;
   test.identical( got, true );
 
-  test.description = "compare src with output";
+  test.case = "compare src with output";
   var recipe =
   [
     {
@@ -347,7 +347,7 @@ var targetInvestigateUpToDate = function( test )
 
 var pathesFor = function( test )
 {
-  test.description = "check if relative pathes are generated correctly";
+  test.case = "check if relative pathes are generated correctly";
   var maker = wMaker({ recipies : [ { name : 'test', before : [] } ] });
   maker.form();
   var recipe = maker.recipies[ 'test' ];
