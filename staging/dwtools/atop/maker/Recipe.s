@@ -1,6 +1,6 @@
 ( function _Recipe_s_( ) {
 
-'use strict';
+'use strict'; /**/
 
 //
 
