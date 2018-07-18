@@ -1,6 +1,6 @@
 ( function _Maker_test_s_( ) {
 
-'use strict'; /**/
+'use strict';
 
 if( typeof module !== 'undefined' )
 {
@@ -351,12 +351,12 @@ var pathesFor = function( test )
   var maker = wMaker({ recipies : [ { name : 'test', before : [] } ] });
   maker.form();
   var recipe = maker.recipies[ 'test' ];
-  var got = recipe.pathsFor( [ '../../../file', '../../../file/test1.cpp', '../../../test2.cpp' ] );
+  var got = recipe.pathsFor( [ '../../../file', '../../../files/test1.cpp', '../../../test2.cpp' ] );
   var currentDir = _.pathRealMainDir();
   var expected =
   [
     _.pathResolve( currentDir, '../../../file' ),
-    _.pathResolve( currentDir, '../../../file/test1.cpp' ),
+    _.pathResolve( currentDir, '../../../files/test1.cpp' ),
     _.pathResolve( currentDir, '../../../test2.cpp' ),
   ];
 
