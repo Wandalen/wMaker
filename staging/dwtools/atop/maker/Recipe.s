@@ -424,7 +424,7 @@ function _makeTarget()
       path : recipe.env.resolve( recipe.shell ),
       throwingExitCode : 1,
       applyingExitCode : 1,
-      outputColoring : 1,
+      outputGray : 0,
       outputPrefixing : 1,
       stdio : 'inherit',
     });
