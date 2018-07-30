@@ -46,7 +46,7 @@ var Self = function wMaker( o )
   return Self.prototype.init.apply( this,arguments );
 }
 
-Self.nameShort = 'Maker';
+Self.shortName = 'Maker';
 
 //
 
@@ -57,7 +57,7 @@ function form()
   _.assert( arguments.length === 0 );
 
   // if( !maker.opt )
-  // throw _.err( 'Maker expects ( opt )' );
+  // throw _.err( 'Maker expects {-opt-}' );
 
   /* */
 
@@ -80,7 +80,7 @@ function form()
   var recipe = maker.recipeName || maker.defaultRecipeName;
 
   if( !recipe )
-  throw _.err( 'Maker expects ( recipe )' );
+  throw _.err( 'Maker expects {-recipe-}' );
 
   recipe = maker.recipeFor( recipe );
 
@@ -208,7 +208,7 @@ function recipesAdjust()
   /* */
 
   if( !_.objectIs( maker.recipies ) )
-  throw _.err( 'Maker expects map ( recipe )' )
+  throw _.err( 'Maker expects map {-recipe-}' )
 
   for( var t in maker.recipies )
   {
@@ -478,7 +478,7 @@ _.prototypeCrossRefer
 
 //
 
-_global_[ Self.name ] = _[ Self.nameShort ] = Self;
+_global_[ Self.name ] = _[ Self.shortName ] = Self;
 if( typeof module !== 'undefined' && module !== null )
 module[ 'exports' ] = Self;
 

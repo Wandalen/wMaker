@@ -16,7 +16,7 @@ var Self = function wRecipe( o )
   return Self.prototype.init.apply( this,arguments );
 }
 
-Self.nameShort = 'Recipe';
+Self.shortName = 'Recipe';
 
 // --
 //
