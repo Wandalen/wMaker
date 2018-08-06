@@ -62,12 +62,12 @@ var basePath;
 
 function testDirMake()
 {
-  basePath = _.dirTempMake( _.pathJoin( __dirname, '../..' ) );
+  basePath = _.path.dirTempMake( _.path.join( __dirname, '../..' ) );
 
   _.mapOwnKeys( files )
   .forEach( ( name ) =>
   {
-    var path = _.pathJoin( basePath, name );
+    var path = _.path.join( basePath, name );
     _.fileProvider.fileWrite( path, files[ name ] );
   });
 }
@@ -133,7 +133,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStat( _.pathJoin( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    var got = _.fileProvider.fileStat( _.path.join( opt.basePath,`out/test1${exe}` ) ) != undefined;
     test.identical( got,true );
   })
   .ifNoErrorThen(function()
@@ -161,7 +161,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStat( _.pathJoin( opt.basePath,`out/test2.o` ) ) != undefined;
+    var got = _.fileProvider.fileStat( _.path.join( opt.basePath,`out/test2.o` ) ) != undefined;
     test.identical( got,true );
   });
 
@@ -172,8 +172,8 @@ var simplest = function( test )
 
 var recipeRunCheck = function( test )
 {
-  var file1 = _.pathJoin( basePath, 'file1');
-  var file2 = _.pathJoin( basePath, 'file2');
+  var file1 = _.path.join( basePath, 'file1');
+  var file2 = _.path.join( basePath, 'file2');
 
   var called = false;
   var pre = function(){ called = true; }
@@ -352,12 +352,12 @@ var pathesFor = function( test )
   maker.form();
   var recipe = maker.recipies[ 'test' ];
   var got = recipe.pathsFor( [ '../../../file', '../../../files/test1.cpp', '../../../test2.cpp' ] );
-  var currentDir = _.pathRealMainDir();
+  var currentDir = _.path.realMainDir();
   var expected =
   [
-    _.pathResolve( currentDir, '../../../file' ),
-    _.pathResolve( currentDir, '../../../files/test1.cpp' ),
-    _.pathResolve( currentDir, '../../../test2.cpp' ),
+    _.path.resolve( currentDir, '../../../file' ),
+    _.path.resolve( currentDir, '../../../files/test1.cpp' ),
+    _.path.resolve( currentDir, '../../../test2.cpp' ),
   ];
 
   test.identical( got, expected );

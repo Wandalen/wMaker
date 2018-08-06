@@ -534,9 +534,9 @@ function filesMissed()
     // debugger;
     // debugger;
 
-    // var paths = maker.pathsFor( _.pathJoin( dirs[ d ],path ) );
+    // var paths = maker.pathsFor( _.path.join( dirs[ d ],path ) );
     // var paths = maker.pathsFor( path );
-    // paths = _.pathsJoin( dirs[ d ],paths );
+    // paths = _.path.pathsJoin( dirs[ d ],paths );
 
     var paths = recipe._pathsFor( path,dirs[ d ] );
 
@@ -638,7 +638,7 @@ function _pathsFor( paths,dir )
   _.assert( recipe.env );
 
   result = recipe.env.resolve( result );
-  result = _.pathsJoin( dir,result );
+  result = _.path.pathsJoin( dir,result );
 
   // if( _.strIs( paths ) )
   // paths = [ paths ];
@@ -646,7 +646,7 @@ function _pathsFor( paths,dir )
   if( _.arrayIs( result ) )
   return recipe._pathsFor( result,dir );
 
-  result = _.pathResolve( maker.currentPath,result );
+  result = _.path.resolve( maker.currentPath,result );
 
   return [ result ];
 }
@@ -739,7 +739,7 @@ var Proto =
 
   //
 
-  /* constructor * : * Self, */
+  
   Composes : Composes,
   Aggregates : Aggregates,
   Associates : Associates,
@@ -750,7 +750,7 @@ var Proto =
 
 //
 
-_.classMake
+_.classDeclare
 ({
   cls : Self,
   extend : Proto,

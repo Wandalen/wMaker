@@ -62,7 +62,7 @@ function form()
   /* */
 
   if( !maker.currentPath )
-  maker.currentPath = _.pathRealMainDir();
+  maker.currentPath = _.path.realMainDir();
 
   if( !maker.fileProvider )
   maker.fileProvider = _.FileProvider.HardDrive();
@@ -297,7 +297,7 @@ function recipyWithBefore( before )
 //   if( _.arrayIs( result ) )
 //   return maker.pathsFor( result );
 //
-//   result = _.pathResolve( maker.currentPath,result );
+//   result = _.path.resolve( maker.currentPath,result );
 //
 //   return [ result ];
 // }
@@ -454,7 +454,7 @@ var Proto =
 
 //
 
-_.classMake
+_.classDeclare
 ({
   cls : Self,
   extend : Proto,
