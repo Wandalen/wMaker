@@ -69,10 +69,10 @@ function form()
   // if( but.length )
   // throw _.err( 'Recipe',recipe.name,'should not have fields',but );
 
-  if( !_.strIsNotEmpty( recipe.name ) )
+  if( !strIsNotEmpty( recipe.name ) )
   debugger;
 
-  if( !_.strIsNotEmpty( recipe.name ) )
+  if( !strIsNotEmpty( recipe.name ) )
   throw _.err( 'Recipe','expects string { name }' );
 
   if( recipe.shell && !_.strIs( recipe.shell ) )
@@ -187,7 +187,7 @@ function subFrom( name,nodes )
   // if( _.arrayIs( name ) )
   // name = name.join( ';' );
 
-  _.assert( _.strIsNotEmpty( name ),'expects string { name }' )
+  _.assert( strIsNotEmpty( name ),'expects string { name }' )
   _.assert( arguments.length === 2, 'expects exactly two arguments' );
 
   var before = recipe.env.resolve( name );
@@ -371,7 +371,7 @@ function makeTarget()
   if( recipe.investigateUpToDate() )
   {
     logger.log( 'Recipe',recipe.name,'is up to date' );
-    return con.give();
+    return con.take( null );
   }
 
   return recipe._makeTarget();
@@ -383,7 +383,7 @@ function _makeTarget()
 {
   var recipe = this;
   var maker = recipe.maker;
-  var con = new _.Consequence().give();
+  var con = new _.Consequence().take( null );
 
   _.assert( arguments.length === 0 );
 
@@ -421,13 +421,14 @@ function _makeTarget()
     if( recipe.shell )
     return _.shell
     ({
-      path : recipe.env.resolve( recipe.shell ),
+      execPath : recipe.env.resolve( recipe.shell ),
       throwingExitCode : 1,
       applyingExitCode : 1,
       outputGray : 0,
       outputPrefixing : 1,
       stdio : 'inherit',
     });
+    return null;
   });
 
   /* post */
@@ -449,11 +450,12 @@ function _makeTarget()
     if( !done.ok )
     throw _.errBriefly( 'Recipe "' + recipe.name +'" failed to produce "' + done.missing + '"' );
 
+    return null;
   });
 
   /* end */
 
-  con.doThen( function( err,data )
+  con.finally( function( err,data )
   {
 
     if( maker.verbosity )
@@ -471,6 +473,8 @@ function _makeTarget()
 
     if( err )
     throw err;
+
+    return null;
   });
 
   return con;
@@ -651,6 +655,13 @@ function _pathsFor( paths,dir )
   return [ result ];
 }
 
+function strIsNotEmpty( src )
+{
+  if( !src )
+  return false;
+  return _.strIs( src );
+}
+
 // --
 // relationship
 // --
@@ -739,7 +750,7 @@ var Proto =
 
   //
 
-  
+
   Composes : Composes,
   Aggregates : Aggregates,
   Associates : Associates,
@@ -759,7 +770,7 @@ _.classDeclare
 
 _.Copyable.mixin( Self );
 
-_.accessorForbid( Self.prototype,Forbids );
+_.accessor.forbid( Self.prototype,Forbids );
 
 //
 
