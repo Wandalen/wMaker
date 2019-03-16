@@ -323,13 +323,6 @@ function _recipiesSet( src )
 
 }
 
-function strIsNotEmpty( src )
-{
-  if( !src )
-  return false;
-  return _.strIs( src );
-}
-
 // --
 // targets
 // --
@@ -466,11 +459,7 @@ _.classDeclare
 _.Copyable.mixin( Self );
 
 _.accessor.declare( Self.prototype,Accessors );
-<<<<<<< HEAD:proto/dwtools/atop/maker/Maker.s
-_.accessor.declare( Self.prototype,Forbids );
-=======
 _.accessor.forbid( Self.prototype,Forbids );
->>>>>>> 5cfa5aca227c02ad80bd3b2e92f7e477e3796985:staging/dwtools/atop/maker/Maker.s
 
 _.prototypeCrossRefer
 ({
