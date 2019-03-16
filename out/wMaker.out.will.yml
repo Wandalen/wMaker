@@ -72,7 +72,6 @@ reflector:
     src:
       filePath:
         .: .
-      basePath: .
       prefixPath: proto
       maskAll:
         excludeAny:
@@ -87,7 +86,6 @@ reflector:
           - !<tag:yaml.org,2002:js/regexp> /\.test($|\.|\/)/i
           - !<tag:yaml.org,2002:js/regexp> /\.experiment($|\.|\/)/i
     dst:
-      basePath: .
       prefixPath: out/release
     criterion:
       debug: 0
@@ -97,7 +95,6 @@ reflector:
     src:
       filePath:
         .: .
-      basePath: .
       prefixPath: proto
       maskAll:
         excludeAny:
@@ -110,7 +107,6 @@ reflector:
           - !<tag:yaml.org,2002:js/regexp> /(^|\/)-/
           - !<tag:yaml.org,2002:js/regexp> /\.release($|\.|\/)/i
     dst:
-      basePath: .
       prefixPath: out/debug
     criterion:
       debug: 1
@@ -136,7 +132,6 @@ reflector:
     src:
       filePath:
         .: null
-      basePath: .
       prefixPath: proto
     criterion:
       default: 1
