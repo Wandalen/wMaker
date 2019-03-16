@@ -1,6 +1,6 @@
 {
   "name": "wmaker",
-  "version": "0.3.46",
+  "version": "0.3.47",
   "engine": "node >= 6.0.0",
   "enabled": 1,
   "description": "Analog of so-called 'make' in Java Script.",
@@ -19,7 +19,8 @@
   "main": "proto/dwtools/atop/maker/Maker.s",
   "files": [
     "proto/dwtools/atop/maker",
-    "proto/dwtools/Tools.s", "production"
+    "proto/dwtools/Tools.s",
+    "production"
   ],
   "directories": {
     "test": "wtest proto",
