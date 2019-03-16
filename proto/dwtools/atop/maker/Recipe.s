@@ -182,8 +182,13 @@ function subFrom( name,nodes )
   // if( _.arrayIs( name ) )
   // name = name.join( ';' );
 
+<<<<<<< HEAD:proto/dwtools/atop/maker/Recipe.s
   _.assert( _.strDefined( name ),'Expects string { name }' )
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
+=======
+  _.assert( strIsNotEmpty( name ),'expects string { name }' )
+  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+>>>>>>> 5cfa5aca227c02ad80bd3b2e92f7e477e3796985:staging/dwtools/atop/maker/Recipe.s
 
   var before = recipe.env.resolve( name );
 
@@ -423,6 +428,7 @@ function _makeTarget()
       outputPrefixing : 1,
       stdio : 'inherit',
     });
+    return null;
   });
 
   /* post */
@@ -444,6 +450,7 @@ function _makeTarget()
     if( !done.ok )
     throw _.errBriefly( 'Recipe "' + recipe.name +'" failed to produce "' + done.missing + '"' );
 
+    return null;
   });
 
   /* end */
@@ -466,6 +473,8 @@ function _makeTarget()
 
     if( err )
     throw err;
+
+    return null;
   });
 
   return con;
@@ -644,6 +653,13 @@ function _pathsFor( paths,dir )
   result = _.path.resolve( maker.currentPath,result );
 
   return [ result ];
+}
+
+function strIsNotEmpty( src )
+{
+  if( !src )
+  return false;
+  return _.strIs( src );
 }
 
 // --
