@@ -38,12 +38,7 @@ var _ = _global_.wTools;
 var Parent = null;
 var Self = function wMaker( o )
 {
-  if( !( this instanceof Self ) )
-  if( o instanceof Self )
-  return o;
-  else
-  return new( _.routineJoin( Self, Self, arguments ) );
-  return Self.prototype.init.apply( this,arguments );
+  return _.instanceConstructor( Self, this, arguments );
 }
 
 Self.shortName = 'Maker';
@@ -154,10 +149,10 @@ function recipeNameGet( recipe )
   // debugger;
   // result = recipe.env.resolve( result );
 
-  if( !_.strIsNotEmpty( result ) )
+  if( !_.strDefined( result ) )
   debugger;
 
-  if( !_.strIsNotEmpty( result ) )
+  if( !_.strDefined( result ) )
   throw _.err( 'no name for recipe',recipe );
 
   return result;
@@ -463,8 +458,8 @@ _.classDeclare
 
 _.Copyable.mixin( Self );
 
-_.accessor( Self.prototype,Accessors );
-_.accessor( Self.prototype,Forbids );
+_.accessor.declare( Self.prototype,Accessors );
+_.accessor.declare( Self.prototype,Forbids );
 
 _.prototypeCrossRefer
 ({

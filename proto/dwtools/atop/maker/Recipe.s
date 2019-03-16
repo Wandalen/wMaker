@@ -8,12 +8,7 @@ var _ = _global_.wTools;
 var Parent = null;
 var Self = function wRecipe( o )
 {
-  if( !( this instanceof Self ) )
-  if( o instanceof Self )
-  return o;
-  else
-  return new( _.routineJoin( Self, Self, arguments ) );
-  return Self.prototype.init.apply( this,arguments );
+  return _.instanceConstructor( Self, this, arguments );
 }
 
 Self.shortName = 'Recipe';
@@ -55,7 +50,7 @@ function form()
 
   /* verification */
 
-  _.assert( maker,'expects { maker }' );
+  _.assert( maker,'Expects { maker }' );
   _.assert( arguments.length === 0 );
   _.assert( !recipe._formed );
   // _.assert( recipe._preformed );
@@ -67,29 +62,29 @@ function form()
 
   // var but = _.mapKeys( _.mapBut( recipe,maker.RecipeFields[ 'recipe' ] ) );
   // if( but.length )
-  // throw _.err( 'Recipe',recipe.name,'should not have fields',but );
+  // throw _.err( 'Recipe',recipe.name,'should not have fields', but );
 
-  if( !_.strIsNotEmpty( recipe.name ) )
+  if( !_.strDefined( recipe.name ) )
   debugger;
 
-  if( !_.strIsNotEmpty( recipe.name ) )
-  throw _.err( 'Recipe','expects string { name }' );
+  if( !_.strDefined( recipe.name ) )
+  throw _.err( 'Recipe','Expects string { name }' );
 
   if( recipe.shell && !_.strIs( recipe.shell ) )
-  throw _.err( 'Recipe',recipe.name,'expects string { shell }' );
+  throw _.err( 'Recipe',recipe.name,'Expects string { shell }' );
 
   if( recipe.pre && !_.routineIs( recipe.pre ) )
-  throw _.err( 'Recipe',recipe.name,'expects routine { pre }' );
+  throw _.err( 'Recipe',recipe.name,'Expects routine { pre }' );
 
   if( recipe.post && !_.routineIs( recipe.post ) )
-  throw _.err( 'Recipe',recipe.name,'expects routine { post }' );
+  throw _.err( 'Recipe',recipe.name,'Expects routine { post }' );
 
   if( recipe.after && !_.arrayIs( recipe.after ) && !_.strIs( recipe.after ) )
-  throw _.err( 'Recipe',recipe.name,'expects string or array { recipe }' );
+  throw _.err( 'Recipe',recipe.name,'Expects string or array { recipe }' );
 
   if( recipe.kind === 'recipe' )
   if( !_.arrayIs( recipe.before ) && !_.strIs( recipe.before ) )
-  throw _.err( 'Recipe',recipe.name,'expects array or string { before }' );
+  throw _.err( 'Recipe',recipe.name,'Expects array or string { before }' );
 
   if( !_.arrayHas( recipe.Kind , recipe.kind ) )
   throw _.err( 'Recipe',recipe.name,'should have known { kind }, but have',recipe.kind );
@@ -147,7 +142,7 @@ function hasAfter( after )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( _.strIs( after ) );
   _.assert( recipe.env );
 
@@ -187,8 +182,8 @@ function subFrom( name,nodes )
   // if( _.arrayIs( name ) )
   // name = name.join( ';' );
 
-  _.assert( _.strIsNotEmpty( name ),'expects string { name }' )
-  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+  _.assert( _.strDefined( name ),'Expects string { name }' )
+  _.assert( arguments.length === 2, 'Expects exactly two arguments' );
 
   var before = recipe.env.resolve( name );
 
@@ -268,7 +263,7 @@ function isDone()
   var paths = recipe.pathsFor( recipe.after );
   for( var a = 0 ; a < recipe.after.length ; a++ )
   {
-    if( !maker.fileProvider.fileStat( paths[ a ] ) )
+    if( !maker.fileProvider.statResolvedRead( paths[ a ] ) )
     {
       result.missing = paths[ a ];
       return result;
@@ -295,7 +290,7 @@ function _investigateUpToDate( parent )
   var recipe = this;
   var result = true;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   if( recipe.kind === 'recipe' )
   result = recipe.investigateUpToDateRecipe() && result;
@@ -339,7 +334,7 @@ function investigateUpToDateFile( file )
   var maker = recipe.maker;
 
   _.assert( recipe );
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   if( file.upToDate !== undefined )
   {
@@ -371,7 +366,7 @@ function makeTarget()
   if( recipe.investigateUpToDate() )
   {
     logger.log( 'Recipe',recipe.name,'is up to date' );
-    return con.give();
+    return con.take( null );
   }
 
   return recipe._makeTarget();
@@ -383,7 +378,7 @@ function _makeTarget()
 {
   var recipe = this;
   var maker = recipe.maker;
-  var con = new _.Consequence().give();
+  var con = new _.Consequence().take( null );
 
   _.assert( arguments.length === 0 );
 
@@ -404,7 +399,7 @@ function _makeTarget()
   /* pre */
 
   if( recipe.pre )
-  con.ifNoErrorThen( function()
+  con.ifNoErrorThen( function( arg/*aaa*/ )
   {
     return recipe.pre.call( maker,recipe );
   });
@@ -416,12 +411,12 @@ function _makeTarget()
   /* shell */
 
   if( recipe.shell )
-  con.ifNoErrorThen( function()
+  con.ifNoErrorThen( function( arg/*aaa*/ )
   {
     if( recipe.shell )
     return _.shell
     ({
-      path : recipe.env.resolve( recipe.shell ),
+      execPath : recipe.env.resolve( recipe.shell ),
       throwingExitCode : 1,
       applyingExitCode : 1,
       outputGray : 0,
@@ -433,7 +428,7 @@ function _makeTarget()
   /* post */
 
   if( recipe.post )
-  con.ifNoErrorThen( function()
+  con.ifNoErrorThen( function( arg/*aaa*/ )
   {
     debugger;
     throw _.err( 'not tested' );
@@ -442,7 +437,7 @@ function _makeTarget()
 
   /* validation */
 
-  con.ifNoErrorThen( function()
+  con.ifNoErrorThen( function( arg/*aaa*/ )
   {
     var done = recipe.isDone();
 
@@ -453,7 +448,7 @@ function _makeTarget()
 
   /* end */
 
-  con.doThen( function( err,data )
+  con.finally( function( err,data )
   {
 
     if( maker.verbosity )
@@ -483,7 +478,7 @@ function _makeTargetDependencies( con )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   /* */
 
@@ -536,7 +531,7 @@ function filesMissed()
 
     // var paths = maker.pathsFor( _.path.join( dirs[ d ],path ) );
     // var paths = maker.pathsFor( path );
-    // paths = _.path.pathsJoin( dirs[ d ],paths );
+    // paths = _.path.s.join( dirs[ d ],paths );
 
     var paths = recipe._pathsFor( path,dirs[ d ] );
 
@@ -547,7 +542,7 @@ function filesMissed()
     _.assert( paths.length >= 1,'not tested' );
 
     for( var f = 0 ; f < paths.length ; f++ )
-    if( !maker.fileProvider.fileStat( paths[ f ] ) )
+    if( !maker.fileProvider.statResolvedRead( paths[ f ] ) )
     {
       debugger;
       notMade.push( paths[ f ] );
@@ -593,7 +588,7 @@ function pathsFor( paths )
   // debugger;
   // var dirs = ( recipe._dirs && recipe._dirs.length ) ? recipe._dirs : [ '.' ];
 
-  _.assert( arguments.length === 1, 'expects single argument' );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   /* */
 
@@ -618,7 +613,7 @@ function _pathsFor( paths,dir )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 2, 'expects exactly two arguments' );
+  _.assert( arguments.length === 2, 'Expects exactly two arguments' );
   _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
 
   /* */
@@ -638,7 +633,7 @@ function _pathsFor( paths,dir )
   _.assert( recipe.env );
 
   result = recipe.env.resolve( result );
-  result = _.path.pathsJoin( dir,result );
+  result = _.path.s.join( dir,result );
 
   // if( _.strIs( paths ) )
   // paths = [ paths ];
@@ -707,7 +702,7 @@ var Forbids =
 }
 
 // --
-// define class
+// declare
 // --
 
 var Proto =
@@ -739,7 +734,7 @@ var Proto =
 
   //
 
-  
+
   Composes : Composes,
   Aggregates : Aggregates,
   Associates : Associates,
@@ -759,7 +754,7 @@ _.classDeclare
 
 _.Copyable.mixin( Self );
 
-_.accessorForbid( Self.prototype,Forbids );
+_.accessor.forbid( Self.prototype,Forbids );
 
 //
 

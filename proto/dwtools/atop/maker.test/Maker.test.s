@@ -62,7 +62,7 @@ var basePath;
 
 function testDirMake()
 {
-  basePath = _.path.dirTempMake( _.path.join( __dirname, '../..' ) );
+  basePath = _.path.dirTempOpen( _.path.join( __dirname, '../..' ) );
 
   _.mapOwnKeys( files )
   .forEach( ( name ) =>
@@ -83,9 +83,9 @@ function cleanTestDir()
 
 var pre = function pre()
 {
-  var outPath = this.env.query( 'opt/outPath' );
+  var outPath = this.env.select( 'opt/outPath' );
   logger.log( 'outPath',outPath );
-  _.fileProvider.directoryMake( outPath );
+  _.fileProvider.dirMake( outPath );
 };
 
 //
@@ -122,7 +122,7 @@ var simplest = function( test )
     recipies : recipe,
   };
 
-  var con = new _.Consequence().give();
+  var con = new _.Consequence().take( null );
 
   con.ifNoErrorThen(function()
   {
@@ -133,7 +133,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStat( _.path.join( opt.basePath,`out/test1${exe}` ) ) != undefined;
+    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath,`out/test1${exe}` ) ) != undefined;
     test.identical( got,true );
   })
   .ifNoErrorThen(function()
@@ -161,7 +161,7 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.fileStat( _.path.join( opt.basePath,`out/test2.o` ) ) != undefined;
+    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath,`out/test2.o` ) ) != undefined;
     test.identical( got,true );
   });
 
@@ -185,7 +185,7 @@ var recipeRunCheck = function( test )
       sync : 1,
   });
   var con = _.timeOut( 1000 );
-  con.doThen( function( )
+  con.finally( function( )
   {
     _.fileProvider.fileWrite
     ({
@@ -194,7 +194,7 @@ var recipeRunCheck = function( test )
        sync : 1,
     });
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     test.case = 'after is older then before';
     var recipe =
@@ -209,12 +209,12 @@ var recipeRunCheck = function( test )
     var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     //if no error recipe is done
     test.identical( called , true );
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     called = false;
     var recipe =
@@ -230,11 +230,11 @@ var recipeRunCheck = function( test )
     var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     test.identical( called, false );
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     var recipe =
     [
@@ -249,7 +249,7 @@ var recipeRunCheck = function( test )
     var con = wMaker({ recipies : recipe }).form();
     return test.shouldMessageOnlyOnce( con );
   })
-  .ifNoErrorThen( function()
+  .ifNoErrorThen( function( arg/*aaa*/ )
   {
     test.identical( called, false );
   });
@@ -345,9 +345,9 @@ var targetInvestigateUpToDate = function( test )
 
 //
 
-var pathesFor = function( test )
+var pathsFor = function( test )
 {
-  test.case = "check if relative pathes are generated correctly";
+  test.case = "check if relative paths are generated correctly";
   var maker = wMaker({ recipies : [ { name : 'test', before : [] } ] });
   maker.form();
   var recipe = maker.recipies[ 'test' ];
@@ -385,7 +385,7 @@ var Self =
 
     //etc
 
-    pathesFor : pathesFor,
+    pathsFor : pathsFor,
 
   },
 
@@ -397,6 +397,6 @@ var Self =
 
 Self = wTestSuite( Self );
 if( typeof module !== 'undefined' && !module.parent )
-_.Tester.test( Self.name );
+wTester.test( Self.name );
 
 })();
