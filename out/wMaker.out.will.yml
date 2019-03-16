@@ -15,25 +15,27 @@ execution:
     test: wtest proto
     docgen: wdocgen staging
 path:
-  proto:
-    path: ./proto
   in:
-    path: .
+    path: ..
+  temp:
+    path: out
   out:
     path: out
   out.debug:
-    path: ./out.debug
+    path: ./out/debug
     criterion:
       debug: 1
   out.release:
-    path: ./out.release
+    path: ./out/release
     criterion:
       debug: 0
+  proto:
+    path: ./proto
   repository:
     path: 'git+https://github.com/Wandalen/wMaker.git'
   bugs:
     path: 'https://github.com/Wandalen/wMaker/issues'
-  exportedDir.0:
+  exportedDir.proto.export:
     path: ./proto
     criterion:
       default: 1
@@ -42,28 +44,20 @@ path:
       proto: 1
       export: 1
       tar: 1
-  baseDir:
-    path: ..
-  exportedFiles.0:
+      public: 1
+  exportedFiles.proto.export:
     path:
-      - .
-      - ./dwtools
-      - ./dwtools/Tools.s
-      - ./dwtools/abase
-      - ./dwtools/amid
-      - ./dwtools/atop
-      - ./dwtools/atop/.DS_Store
-      - ./dwtools/atop/maker
-      - ./dwtools/atop/maker/Maker.s
-      - ./dwtools/atop/maker/Recipe.s
-      - ./dwtools/atop/maker.test
-      - ./dwtools/atop/maker.test/Maker.test.s
-      - ./dwtools/tmp.tmp
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/out
+      - proto
+      - proto/dwtools
+      - proto/dwtools/Tools.s
+      - proto/dwtools/abase
+      - proto/dwtools/amid
+      - proto/dwtools/atop
+      - proto/dwtools/atop/maker
+      - proto/dwtools/atop/maker/Maker.s
+      - proto/dwtools/atop/maker/Recipe.s
+      - proto/dwtools/atop/maker.test
+      - proto/dwtools/atop/maker.test/Maker.test.s
     criterion:
       default: 1
       debug: 1
@@ -71,29 +65,15 @@ path:
       proto: 1
       export: 1
       tar: 1
-  exportedTerminals.0:
-    path:
-      - ./dwtools/Tools.s
-      - ./dwtools/atop/.DS_Store
-      - ./dwtools/atop/maker/Maker.s
-      - ./dwtools/atop/maker/Recipe.s
-      - ./dwtools/atop/maker.test/Maker.test.s
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp
-      - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp
-    criterion:
-      default: 1
-      debug: 1
-      raw: 1
-      proto: 1
-      export: 1
-      tar: 1
+      public: 1
 submodule: {}
 reflector:
-  reflect.proto.0:
-    filePath:
-      ./proto: ./out.release
-    srcFilter:
+  reflect.proto.:
+    src:
+      filePath:
+        .: .
+      basePath: .
+      prefixPath: proto
       maskAll:
         excludeAny:
           - !<tag:yaml.org,2002:js/regexp> /(\W|^)node_modules(\W|$)/
@@ -103,21 +83,22 @@ reflector:
           - !<tag:yaml.org,2002:js/regexp> /\.hg$/
           - !<tag:yaml.org,2002:js/regexp> /\.DS_Store$/
           - !<tag:yaml.org,2002:js/regexp> /(^|\/)-/
-          - !<tag:yaml.org,2002:js/regexp> /\.release($|\.|\/)/i
           - !<tag:yaml.org,2002:js/regexp> /\.debug($|\.|\/)/i
           - !<tag:yaml.org,2002:js/regexp> /\.test($|\.|\/)/i
           - !<tag:yaml.org,2002:js/regexp> /\.experiment($|\.|\/)/i
-      prefixPath: .
-    dstFilter:
-      prefixPath: .
+    dst:
+      basePath: .
+      prefixPath: out/release
     criterion:
       debug: 0
     inherit:
       - predefined.*
-  reflect.proto.1:
-    filePath:
-      ./proto: ./out.debug
-    srcFilter:
+  reflect.proto.debug:
+    src:
+      filePath:
+        .: .
+      basePath: .
+      prefixPath: proto
       maskAll:
         excludeAny:
           - !<tag:yaml.org,2002:js/regexp> /(\W|^)node_modules(\W|$)/
@@ -128,18 +109,15 @@ reflector:
           - !<tag:yaml.org,2002:js/regexp> /\.DS_Store$/
           - !<tag:yaml.org,2002:js/regexp> /(^|\/)-/
           - !<tag:yaml.org,2002:js/regexp> /\.release($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.debug($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.test($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.experiment($|\.|\/)/i
-      prefixPath: .
-    dstFilter:
-      prefixPath: .
+    dst:
+      basePath: .
+      prefixPath: out/debug
     criterion:
       debug: 1
     inherit:
       - predefined.*
   reflect.submodules:
-    srcFilter:
+    src:
       maskAll:
         excludeAny:
           - !<tag:yaml.org,2002:js/regexp> /(\W|^)node_modules(\W|$)/
@@ -150,41 +128,65 @@ reflector:
           - !<tag:yaml.org,2002:js/regexp> /\.DS_Store$/
           - !<tag:yaml.org,2002:js/regexp> /(^|\/)-/
           - !<tag:yaml.org,2002:js/regexp> /\.release($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.debug($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.test($|\.|\/)/i
-          - !<tag:yaml.org,2002:js/regexp> /\.experiment($|\.|\/)/i
-      prefixPath: .
-    dstFilter:
-      prefixPath: .
     criterion:
       debug: 1
     inherit:
       - predefined.*
-  exported.0:
-    filePath: ./proto
-    srcFilter:
-      prefixPath: .
-    dstFilter:
-      prefixPath: .
-  exportedFiles.0:
-    recursive: 0
-    filePath:
-      ./dwtools/Tools.s: true
-      ./dwtools/atop/.DS_Store: true
-      ./dwtools/atop/maker/Maker.s: true
-      ./dwtools/atop/maker/Recipe.s: true
-      ./dwtools/atop/maker.test/Maker.test.s: true
-      ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1: true
-      ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp: true
-      ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp: true
-    srcFilter:
+  exported.proto.export:
+    src:
+      filePath:
+        .: null
       basePath: .
       prefixPath: proto
-    dstFilter:
+    criterion:
+      default: 1
+      debug: 1
+      raw: 1
+      proto: 1
+      export: 1
+      tar: 1
+      public: 1
+  exportedFiles.proto.export:
+    recursive: 0
+    src:
+      filePath:
+        .: null
+        dwtools: null
+        dwtools/Tools.s: null
+        dwtools/abase: null
+        dwtools/amid: null
+        dwtools/atop: null
+        dwtools/atop/maker: null
+        dwtools/atop/maker/Maker.s: null
+        dwtools/atop/maker/Recipe.s: null
+        dwtools/atop/maker.test: null
+        dwtools/atop/maker.test/Maker.test.s: null
       basePath: .
-      prefixPath: .
+      prefixPath: proto
+    criterion:
+      default: 1
+      debug: 1
+      raw: 1
+      proto: 1
+      export: 1
+      tar: 1
+      public: 1
 step:
-  reflect.proto.0:
+  clean.out.:
+    criterion:
+      debug: 0
+    opts:
+      filePath: 'path::out.debug'
+    inherit:
+      - predefined.delete
+  clean.out.debug:
+    criterion:
+      debug: 1
+    opts:
+      filePath: 'path::out.debug'
+    inherit:
+      - predefined.delete
+  reflect.proto.:
     criterion:
       debug: 0
       raw: 0
@@ -192,7 +194,7 @@ step:
       reflector: 'reflector::reflect.proto.*=1'
     inherit:
       - predefined.reflect
-  reflect.proto.1:
+  reflect.proto.debug:
     criterion:
       debug: 1
       raw: 0
@@ -200,7 +202,7 @@ step:
       reflector: 'reflector::reflect.proto.*=1'
     inherit:
       - predefined.reflect
-  reflect.proto.2:
+  reflect.proto.raw:
     criterion:
       debug: 0
       raw: 1
@@ -208,7 +210,7 @@ step:
       reflector: 'reflector::reflect.proto.*=1'
     inherit:
       - predefined.reflect
-  reflect.proto.3:
+  reflect.proto.debug.raw:
     criterion:
       debug: 1
       raw: 1
@@ -216,7 +218,7 @@ step:
       reflector: 'reflector::reflect.proto.*=1'
     inherit:
       - predefined.reflect
-  reflect.submodules.0:
+  reflect.submodules.:
     criterion:
       debug: 1
       raw: 0
@@ -224,7 +226,7 @@ step:
       reflector: 'reflector::reflect.submodules*=1'
     inherit:
       - predefined.reflect
-  reflect.submodules.1:
+  reflect.submodules.raw:
     criterion:
       debug: 1
       raw: 1
@@ -240,7 +242,7 @@ step:
       export: 'path::proto'
       tar: 0
     inherit:
-      - export
+      - predefined.export
 build:
   debug.raw:
     criterion:
@@ -248,24 +250,28 @@ build:
       debug: 1
       raw: 1
     steps:
+      - 'step::clean.out*=1'
       - 'step::reflect.proto.*=1'
   debug.compiled:
     criterion:
       debug: 1
       raw: 0
     steps:
+      - 'step::clean.out*=1'
       - 'step::reflect.proto.*=1'
   release.raw:
     criterion:
       debug: 0
       raw: 1
     steps:
+      - 'step::clean.out*=1'
       - 'step::reflect.proto.*=1'
   release.compiled:
     criterion:
       debug: 0
       raw: 0
     steps:
+      - 'step::clean.out*=1'
       - 'step::reflect.proto.*=1'
   all:
     steps:
@@ -279,6 +285,7 @@ build:
       proto: 1
       export: 1
       tar: 1
+      public: 1
     steps:
       - 'build::debug.raw'
       - 'step::export.proto'
@@ -292,24 +299,8 @@ exported:
       proto: 1
       export: 1
       tar: 1
-    exportedReflector: 'reflector::exported.0'
-    exportedFilesReflector: 'reflector::exportedFiles.0'
-    exportedDirPath: 'path::exportedDir.0'
-    exportedFilesPath: 'path::exportedFiles.0'
-    exportedTerminalsPath:
-      path:
-        - ./dwtools/Tools.s
-        - ./dwtools/atop/.DS_Store
-        - ./dwtools/atop/maker/Maker.s
-        - ./dwtools/atop/maker/Recipe.s
-        - ./dwtools/atop/maker.test/Maker.test.s
-        - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1
-        - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp
-        - ./dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp
-      criterion:
-        default: 1
-        debug: 1
-        raw: 1
-        proto: 1
-        export: 1
-        tar: 1
+      public: 1
+    exportedReflector: 'reflector::exported.proto.export'
+    exportedFilesReflector: 'reflector::exportedFiles.proto.export'
+    exportedDirPath: 'path::exportedDir.proto.export'
+    exportedFilesPath: 'path::exportedFiles.proto.export'
