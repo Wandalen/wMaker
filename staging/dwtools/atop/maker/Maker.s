@@ -23,7 +23,7 @@ if( typeof module !== 'undefined' )
   }
 
 
-  var _ = _global_.wTools;
+  let _ = _global_.wTools;
 
   _.include( 'wLogger' );
   _.include( 'wFiles' );
@@ -154,10 +154,10 @@ function recipeNameGet( recipe )
   // debugger;
   // result = recipe.env.resolve( result );
 
-  if( !_.strIsNotEmpty( result ) )
+  if( !strIsNotEmpty( result ) )
   debugger;
 
-  if( !_.strIsNotEmpty( result ) )
+  if( !strIsNotEmpty( result ) )
   throw _.err( 'no name for recipe',recipe );
 
   return result;
@@ -328,6 +328,13 @@ function _recipiesSet( src )
 
 }
 
+function strIsNotEmpty( src )
+{
+  if( !src )
+  return false;
+  return _.strIs( src );
+}
+
 // --
 // targets
 // --
@@ -463,8 +470,8 @@ _.classDeclare
 
 _.Copyable.mixin( Self );
 
-_.accessor( Self.prototype,Accessors );
-_.accessor( Self.prototype,Forbids );
+_.accessor.declare( Self.prototype,Accessors );
+_.accessor.forbid( Self.prototype,Forbids );
 
 _.prototypeCrossRefer
 ({
