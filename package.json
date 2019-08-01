@@ -23,12 +23,12 @@
     "production"
   ],
   "directories": {
-    "test": "wtest proto",
+    "test": "wtest .run proto/**",
     "doc": "doc",
     "main": "proto/dwtools/atop/maker/Maker.s"
   },
   "scripts": {
-    "test": "wtest proto",
+    "test": "wtest .run proto/**",
     "docgen": "wdocgen proto"
   },
   "repository": {
