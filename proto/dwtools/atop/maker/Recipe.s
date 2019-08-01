@@ -8,7 +8,7 @@ var _ = _global_.wTools;
 var Parent = null;
 var Self = function wRecipe( o )
 {
-  return _.instanceConstructor( Self, this, arguments );
+  return _.workpiece.construct( Self, this, arguments );
 }
 
 Self.shortName = 'Recipe';
@@ -345,7 +345,7 @@ function investigateUpToDateFile( file )
   var dst = recipe.pathsFor( recipe.after );
   var src = recipe.pathsFor( file._filePath );
 
-  var result = maker.fileProvider.filesAreUpToDate( dst,src );
+  var result = maker.fileProvider.filesAreUpToDate2({ dst : dst, src : src });
 
   if( maker.verbosity > 1 )
   logger.log( 'investigateUpToDateFile(',recipe.after.join( ',' ),') :',result );

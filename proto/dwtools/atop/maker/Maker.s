@@ -5,25 +5,7 @@
 if( typeof module !== 'undefined' )
 {
 
-  if( typeof _global_ === 'undefined' || !_global_.wBase )
-  {
-    let toolsPath = '../../../dwtools/Base.s';
-    let toolsExternal = 0;
-    try
-    {
-      toolsPath = require.resolve( toolsPath );
-    }
-    catch( err )
-    {
-      toolsExternal = 1;
-      require( 'wTools' );
-    }
-    if( !toolsExternal )
-    require( toolsPath );
-  }
-
-
-  let _ = _global_.wTools;
+  let _ = require( '../../Tools.s' );
 
   _.include( 'wLogger' );
   _.include( 'wFiles' );
@@ -38,7 +20,7 @@ var _ = _global_.wTools;
 var Parent = null;
 var Self = function wMaker( o )
 {
-  return _.instanceConstructor( Self, this, arguments );
+  return _.workpiece.construct( Self, this, arguments );
 }
 
 Self.shortName = 'Maker';
@@ -115,7 +97,7 @@ function recipeFor( recipe )
 {
   var maker = this;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   if( _.strIs( recipe ) )
   {
@@ -136,7 +118,7 @@ function recipeNameGet( recipe )
   var maker = this;
   var result = recipe;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'Expects single argument' );
 
   if( recipe.name !== undefined )
   result = recipe.name;
@@ -233,7 +215,7 @@ function recipyWithBefore( before )
 {
   var maker = this;
 
-  _.assert( arguments.length === 1 );
+  _.assert( arguments.length === 1, 'Expects single argument' );
   _.assert( _.strIs( before ) || _.arrayIs( before ) );
 
   if( _.arrayIs( before ) )
@@ -270,7 +252,7 @@ function recipyWithBefore( before )
 // {
 //   var maker = this;
 //
-//   _.assert( arguments.length === 1 );
+//   _.assert( arguments.length === 1, 'Expects single argument' );
 //   _.assert( _.arrayIs( paths ) || _.strIs( paths ) );
 //
 //   /* */
@@ -412,7 +394,7 @@ var Forbids =
 }
 
 // --
-// proto
+// declare
 // --
 
 var Proto =
@@ -438,7 +420,7 @@ var Proto =
 
   //
 
-  /* constructor * : * Self, */
+
   Composes : Composes,
   Aggregates : Aggregates,
   Associates : Associates,
@@ -459,7 +441,7 @@ _.classDeclare
 _.Copyable.mixin( Self );
 
 _.accessor.declare( Self.prototype,Accessors );
-_.accessor.forbid( Self.prototype,Forbids );
+_.accessor.declare( Self.prototype,Forbids );
 
 _.prototypeCrossRefer
 ({
