@@ -47,7 +47,7 @@ var basePath;
 
 function testDirMake()
 {
-  basePath = _.path.dirTempOpen( _.path.join( __dirname, '../..' ) );
+  basePath = _.path.pathDirTempOpen( _.path.join( __dirname, '../..' ) );
 
   _.mapOwnKeys( files )
   .forEach( ( name ) =>
@@ -114,7 +114,7 @@ var simplest = function( test )
     test.case = 'simple make';
     debugger
     var con = wMaker( o ).form();
-    return test.shouldMessageOnlyOnce( con );
+    return test.returnsSingleResource( con );
   })
   .ifNoErrorThen(function()
   {
@@ -142,7 +142,7 @@ var simplest = function( test )
     };
 
     var con = wMaker( o ).form();
-    return test.shouldMessageOnlyOnce( con );
+    return test.returnsSingleResource( con );
   })
   .ifNoErrorThen(function()
   {
@@ -192,7 +192,7 @@ var recipeRunCheck = function( test )
       }
     ];
     var con = wMaker({ recipies : recipe }).form();
-    return test.shouldMessageOnlyOnce( con );
+    return test.returnsSingleResource( con );
   })
   .ifNoErrorThen( function( arg/*aaa*/ )
   {
@@ -213,7 +213,7 @@ var recipeRunCheck = function( test )
     ];
     test.case = 'after is newer then before';
     var con = wMaker({ recipies : recipe }).form();
-    return test.shouldMessageOnlyOnce( con );
+    return test.returnsSingleResource( con );
   })
   .ifNoErrorThen( function( arg/*aaa*/ )
   {
@@ -232,7 +232,7 @@ var recipeRunCheck = function( test )
     ];
     test.case = 'after == newer';
     var con = wMaker({ recipies : recipe }).form();
-    return test.shouldMessageOnlyOnce( con );
+    return test.returnsSingleResource( con );
   })
   .ifNoErrorThen( function( arg/*aaa*/ )
   {

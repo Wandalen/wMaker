@@ -86,7 +86,7 @@ function exec()
 
   _.assert( arguments.length === 0 );
 
-  var recipeName = _.appArgs().subject;
+  var recipeName = _.process.args().subject;
 
   return maker.make( recipeName );
 }
@@ -102,7 +102,7 @@ function recipeFor( recipe )
   if( _.strIs( recipe ) )
   {
     if( !maker.recipies[ recipe ] )
-    throw _.errBriefly( 'Recipe',recipe,'does not exist!' );
+    throw _.errBrief( 'Recipe',recipe,'does not exist!' );
     recipe = maker.recipies[ recipe ];
   }
 

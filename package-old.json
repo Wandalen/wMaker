@@ -20,7 +20,7 @@
   "files": [
     "proto/dwtools/atop/maker",
     "proto/dwtools/Tools.s",
-    "production"
+    "out"
   ],
   "directories": {
     "test": "wtest .run proto/**",

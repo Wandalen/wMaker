@@ -414,7 +414,7 @@ function _makeTarget()
   con.ifNoErrorThen( function( arg/*aaa*/ )
   {
     if( recipe.shell )
-    return _.shell
+    return _.process.start
     ({
       execPath : recipe.env.resolve( recipe.shell ),
       throwingExitCode : 1,
@@ -443,7 +443,7 @@ function _makeTarget()
     var done = recipe.isDone();
 
     if( !done.ok )
-    throw _.errBriefly( 'Recipe "' + recipe.name +'" failed to produce "' + done.missing + '"' );
+    throw _.errBrief( 'Recipe "' + recipe.name +'" failed to produce "' + done.missing + '"' );
 
     return null;
   });
@@ -459,7 +459,7 @@ function _makeTarget()
     if( err )
     {
       debugger;
-      _.appExitCode( -1 );
+      _.process.exitCode( -1 );
       err = _.errLogOnce( err );
     }
 
