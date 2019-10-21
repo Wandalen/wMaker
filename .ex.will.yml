@@ -25,7 +25,7 @@ about :
 path :
 
   repository : git+https:///github.com/Wandalen/wMaker.git
-  remotes :
+  origins :
    - git+https:///github.com/Wandalen/wMaker.git
    - npm:///wmaker
   bugtracker : https:///github.com/Wandalen/wMaker/issues
