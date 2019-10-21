@@ -22,12 +22,12 @@
   }, 
   "dependencies" : 
   {
-    "wLogger" : "", 
-    "wTools" : "", 
-    "wtemplatetree" : "", 
-    "wtemplatetreeenvironment" : "", 
-    "wtemplatetreeresolver" : ""
+    "wLogger" : "beta", 
+    "wTools" : "beta", 
+    "wtemplatetree" : "beta", 
+    "wtemplatetreeenvironment" : "beta", 
+    "wtemplatetreeresolver" : "beta"
   }, 
-  "devDependencies" : { "wTesting" : "" }, 
+  "devDependencies" : { "wTesting" : "beta" }, 
   "keywords" : [ "wTools", "make" ]
 }
