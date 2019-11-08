@@ -2,33 +2,37 @@ format: outwillfile-2.0
 root:
   - wMaker.out
 consistency:
-  ../.ex.will.yml: &ref_0
+  wMaker.out.will.yml: &ref_0
+    hash: ef7fce82fbd25bd0d94d5105f46253c9
+    size: 39521
+  ../.ex.will.yml: &ref_1
     hash: 663d97040bc83a47d4dbc3d4db5bbe5a
     size: 1732
-  ../.im.will.yml: &ref_1
-    hash: 25c73090cdbe46aa8979425db06263b7
-    size: 5195
+  ../.im.will.yml: &ref_2
+    hash: 3214d1f11e140071b0bfd165bf8bcc8b
+    size: 5269
 module:
   wMaker.out:
     about:
       name: wMaker
+      org: noorg
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters: &ref_2
+      interpreters:
         - njs >= 8.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords: &ref_3
+      keywords:
         - wTools
         - make
       license: MIT
       author: Kostiantyn Wandalen <wanalen@willbe.so>
-      contributors: &ref_4
+      contributors:
         - Kostiantyn Wandalen <wanalen@willbe.so>
         - Volodymyr M. <volodymyr.migdal@gmail.com>
       npm.name: wmaker
-      npm.scripts: &ref_5
+      npm.scripts:
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -59,9 +63,6 @@ module:
       download:
         criterion:
           predefined: 1
-      remote:
-        criterion:
-          predefined: 1
       repository:
         path: 'git+https:///github.com/Wandalen/wMaker.git'
       origins:
@@ -71,15 +72,15 @@ module:
       bugtracker:
         path: 'https:///github.com/Wandalen/wMaker/issues'
       in:
-        criterion:
-          predefined: 0
         path: .
       out:
-        criterion:
-          predefined: 0
         path: .
       temp:
-        path: 'path::out'
+        path:
+          - 'path::out'
+          - ../package-lock.json
+          - ../package.json
+          - ../node_modules
       proto:
         path: ../proto
       export:
@@ -144,11 +145,13 @@ module:
         path: '{path::out.*=}/source/Index.s'
       exported.dir.proto.export:
         criterion:
+          generated: 1
           content: proto
           export: 1
         path: ../proto
       exported.files.proto.export:
         criterion:
+          generated: 1
           content: proto
           export: 1
         path:
@@ -357,6 +360,7 @@ module:
           prefixPath: ../proto
         mandatory: 1
         criterion:
+          generated: 1
           content: proto
           export: 1
       exported.files.proto.export:
@@ -369,6 +373,7 @@ module:
         recursive: 0
         mandatory: 1
         criterion:
+          generated: 1
           content: proto
           export: 1
     step:
@@ -722,6 +727,24 @@ module:
           content: prime
         inherit:
           - files.transpile
+      exported.proto.export:
+        opts:
+          reflector: 'reflector::exported.proto.export*'
+        criterion:
+          generated: 1
+          content: proto
+          export: 1
+        inherit:
+          - files.reflect
+      exported.files.proto.export:
+        opts:
+          reflector: 'reflector::exported.files.proto.export*'
+        criterion:
+          generated: 1
+          content: proto
+          export: 1
+        inherit:
+          - files.reflect
     build:
       proto.export:
         steps:
@@ -810,21 +833,32 @@ module:
           content: proto
           export: 1
     consistency:
-      ../.ex.will.yml: *ref_0
-      ../.im.will.yml: *ref_1
+      wMaker.out.will.yml: *ref_0
+      ../.ex.will.yml: *ref_1
+      ../.im.will.yml: *ref_2
   ../:
     about:
       name: wMaker
+      org: noorg
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters: *ref_2
-      keywords: *ref_3
+      interpreters:
+        - njs >= 8.0.0
+        - chrome >= 60.0.0
+        - firefox >= 60.0.0
+      keywords:
+        - wTools
+        - make
       license: MIT
       author: Kostiantyn Wandalen <wanalen@willbe.so>
-      contributors: *ref_4
+      contributors:
+        - Kostiantyn Wandalen <wanalen@willbe.so>
+        - Volodymyr M. <volodymyr.migdal@gmail.com>
       npm.name: wmaker
-      npm.scripts: *ref_5
+      npm.scripts:
+        test: wtest .run proto/**
+        docgen: wdocgen .build proto
     path:
       module.willfiles:
         criterion:
@@ -853,9 +887,6 @@ module:
       download:
         criterion:
           predefined: 1
-      remote:
-        criterion:
-          predefined: 1
       repository:
         path: 'git+https:///github.com/Wandalen/wMaker.git'
       origins:
@@ -865,21 +896,21 @@ module:
       bugtracker:
         path: 'https:///github.com/Wandalen/wMaker/issues'
       in:
-        criterion:
-          predefined: 0
         path: .
       out:
-        criterion:
-          predefined: 0
         path: out
       temp:
-        path: 'path::out'
+        path:
+          - 'path::out'
+          - package-lock.json
+          - package.json
+          - node_modules
       proto:
-        path: ./proto
+        path: proto
       export:
         path: '{path::proto}/**'
       doc:
-        path: ./doc
+        path: doc
       out.raw.debug:
         criterion:
           debug: debug
@@ -1513,5 +1544,8 @@ module:
         hash: 663d97040bc83a47d4dbc3d4db5bbe5a
         size: 1732
       ../.im.will.yml:
-        hash: 25c73090cdbe46aa8979425db06263b7
-        size: 5195
+        hash: 3214d1f11e140071b0bfd165bf8bcc8b
+        size: 5269
+      wMaker.out.will.yml:
+        hash: ef7fce82fbd25bd0d94d5105f46253c9
+        size: 39521

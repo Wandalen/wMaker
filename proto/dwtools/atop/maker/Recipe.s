@@ -86,7 +86,7 @@ function form()
   if( !_.arrayIs( recipe.before ) && !_.strIs( recipe.before ) )
   throw _.err( 'Recipe',recipe.name,'Expects array or string { before }' );
 
-  if( !_.arrayHas( recipe.Kind , recipe.kind ) )
+  if( !_.longHas( recipe.Kind , recipe.kind ) )
   throw _.err( 'Recipe',recipe.name,'should have known { kind }, but have',recipe.kind );
 
   /* */
