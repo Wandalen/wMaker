@@ -169,7 +169,7 @@ var recipeRunCheck = function( test )
       data : 'abc',
       sync : 1,
   });
-  var con = _.timeOut( 1000 );
+  var con = _.time.out( 1000 );
   con.finally( function( )
   {
     _.fileProvider.fileWrite
