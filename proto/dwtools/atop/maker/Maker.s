@@ -31,7 +31,7 @@ function form()
 {
   var maker = this;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   // if( !maker.opt )
   // throw _.err( 'Maker expects {-opt-}' );
@@ -84,7 +84,7 @@ function exec()
 {
   var maker = this;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   var recipeName = _.process.args().subject;
 

@@ -22,7 +22,7 @@ function preform()
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   _.assert( !recipe._formed );
   _.assert( !recipe._preformed );
 
@@ -51,7 +51,7 @@ function form()
   /* verification */
 
   _.assert( maker,'Expects { maker }' );
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   _.assert( !recipe._formed );
   // _.assert( recipe._preformed );
 
@@ -258,7 +258,7 @@ function isDone()
   var result = Object.create( null );
   result.ok = 0;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   var paths = recipe.pathsFor( recipe.after );
   for( var a = 0 ; a < recipe.after.length ; a++ )
@@ -279,7 +279,7 @@ function isDone()
 function investigateUpToDate()
 {
   var recipe = this;
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
   return recipe._investigateUpToDate( null );
 }
 
@@ -361,7 +361,7 @@ function makeTarget()
   var maker = recipe.maker;
   var con = new _.Consequence();
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   if( recipe.investigateUpToDate() )
   {
@@ -380,7 +380,7 @@ function _makeTarget()
   var maker = recipe.maker;
   var con = new _.Consequence().take( null );
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   // if( _.strIs( recipe ) )
   // recipe = maker.recipies[ recipe ];
@@ -521,7 +521,7 @@ function filesMissed()
   var dirs = recipe._dirs && recipe._dirs.length ? recipe._dirs : [ '.' ];
   var path = recipe._filePath;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   var notMade = [];
   // var paths = recipe.pathsFor( path );
@@ -568,7 +568,7 @@ function filesMissedWithError()
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( arguments.length === 0 );
+  _.assert( arguments.length === 0, 'Expects no arguments' );
 
   var notMade = recipe.filesMissed();
 
