@@ -1,6 +1,6 @@
 {
   "name" : "wmaker", 
-  "version" : "0.3.101", 
+  "version" : "0.3.102", 
   "engine" : "node >= 8.0.0", 
   "enabled" : 1, 
   "description" : "Analog of so-called 'make' in Java Script.", 
