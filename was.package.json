@@ -1,33 +1,33 @@
 {
-  "name" : "wmaker", 
-  "version" : "0.3.139", 
-  "engine" : "node >= 8.0.0", 
-  "enabled" : 1, 
-  "description" : "Analog of so-called 'make' in Java Script.", 
-  "author" : "Kostiantyn Wandalen <wanalen@willbe.so>", 
-  "contributors" : 
+  "name" : "wmaker",
+  "version" : "0.3.140",
+  "engine" : "node >= 8.0.0",
+  "enabled" : 1,
+  "description" : "Analog of so-called 'make' in Java Script.",
+  "author" : "Kostiantyn Wandalen <wanalen@willbe.so>",
+  "contributors" :
   [
-    { "name" : "Kostiantyn Wandalen", "email" : "wanalen@willbe.so" }, 
+    { "name" : "Kostiantyn Wandalen", "email" : "wanalen@willbe.so" },
     { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
-  ], 
-  "license" : "MIT", 
-  "main" : "proto/dwtools/atop/maker/Maker.s", 
-  "files" : [ "proto/dwtools/atop/maker", "proto/dwtools/Tools.s", "out" ], 
-  "directories" : { "test" : "wtest .run proto/**", "doc" : "doc", "main" : "proto/dwtools/atop/maker/Maker.s" }, 
-  "scripts" : { "test" : "wtest .run proto/**", "docgen" : "wdocgen proto" }, 
-  "repository" : { "type" : "git", "url" : "https://github.com/Wandalen/wMaker.git" }, 
-  "bugs" : 
+  ],
+  "license" : "MIT",
+  "main" : "proto/dwtools/atop/maker/Maker.s",
+  "files" : [ "proto/dwtools/atop/maker", "proto/dwtools/Tools.s", "out" ],
+  "directories" : { "test" : "wtest .run proto/**", "doc" : "doc", "main" : "proto/dwtools/atop/maker/Maker.s" },
+  "scripts" : { "test" : "wtest .run proto/**", "docgen" : "wdocgen proto" },
+  "repository" : { "type" : "git", "url" : "https://github.com/Wandalen/wMaker.git" },
+  "bugs" :
   {
     "url" : "https://github.com/Wandalen/wMaker/issues"
-  }, 
-  "dependencies" : 
+  },
+  "dependencies" :
   {
-    "wLogger" : "", 
-    "wTools" : "", 
-    "wtemplatetree" : "", 
-    "wtemplatetreeenvironment" : "", 
+    "wLogger" : "",
+    "wTools" : "",
+    "wtemplatetree" : "",
+    "wtemplatetreeenvironment" : "",
     "wtemplatetreeresolver" : ""
-  }, 
-  "devDependencies" : { "wTesting" : "" }, 
+  },
+  "devDependencies" : { "wTesting" : "" },
   "keywords" : [ "wTools", "make" ]
 }
