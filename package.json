@@ -13,8 +13,8 @@
   "license" : "MIT",
   "main" : "proto/dwtools/atop/maker/Maker.s",
   "files" : [ "proto/dwtools/atop/maker", "proto/dwtools/Tools.s", "out" ],
-  "directories" : { "test" : "wtest .run proto/**", "doc" : "doc", "main" : "proto/dwtools/atop/maker/Maker.s" },
-  "scripts" : { "test" : "wtest .run proto/**", "docgen" : "wdocgen proto" },
+  "directories" : { "test" : "wtest .run 'proto/**'", "doc" : "doc", "main" : "proto/dwtools/atop/maker/Maker.s" },
+  "scripts" : { "test" : "wtest .run 'proto/**'", "docgen" : "wdocgen proto" },
   "repository" : { "type" : "git", "url" : "https://github.com/Wandalen/wMaker.git" },
   "bugs" :
   {
