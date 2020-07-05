@@ -1,4 +1,4 @@
-# wMaker [![Build Status](https://travis-ci.org/Wandalen/wMaker.svg?branch=master)](https://travis-ci.org/Wandalen/wMaker)
+# module::Maker [![Status](https://github.com/Wandalen/wMaker/workflows/Test/badge.svg)](https://github.com/Wandalen/wMaker}/actions?query=workflow%3ATest)
 
 Analog of so-called 'make' in Java Script.
 
