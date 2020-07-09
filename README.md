@@ -1,4 +1,4 @@
-# module::Maker [![Status](https://github.com/Wandalen/wMaker/workflows/Test/badge.svg)](https://github.com/Wandalen/wMaker}/actions?query=workflow%3ATest)
+# module::Maker [![Status](https://github.com/Wandalen/wMaker/workflows/Test/badge.svg)](https://github.com/Wandalen/wMaker/actions?query=workflow%3ATest) [![experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 
 Analog of so-called 'make' in Java Script.
 

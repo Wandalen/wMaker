@@ -114,7 +114,7 @@ module:
       entry.proto.no.tests:
         criterion:
           tests: no.tests
-        path: ../proto/dwtools/atop/maker/Maker.s
+        path: ../proto/wtools/atop/maker/Maker.s
       entry.proto.only.tests:
         criterion:
           tests: only.tests
@@ -124,13 +124,13 @@ module:
           debug: debug
           raw: raw
           content: prime
-        path: '{path::out.*=1}/source/dwtools/atop/maker/Maker.s'
+        path: '{path::out.*=1}/source/wtools/atop/maker/Maker.s'
       entry.out.raw.debug.release:
         criterion:
           debug: release
           raw: raw
           content: prime
-        path: '{path::out.*=1}/source/dwtools/atop/maker/Maker.s'
+        path: '{path::out.*=1}/source/wtools/atop/maker/Maker.s'
       entry.out.compiled.debug.debug:
         criterion:
           debug: debug
@@ -157,29 +157,29 @@ module:
         path:
           - ../proto
           - ../proto/Integration.test.s
-          - ../proto/dwtools
-          - ../proto/dwtools/Tools.s
-          - ../proto/dwtools/abase
-          - ../proto/dwtools/amid
-          - ../proto/dwtools/atop
-          - ../proto/dwtools/atop/-maker
-          - ../proto/dwtools/atop/-maker/Maker.s
-          - ../proto/dwtools/atop/-maker/Recipe.s
-          - ../proto/dwtools/atop/-maker.test
-          - ../proto/dwtools/atop/-maker.test/Maker.test.s
-          - ../proto/dwtools/atop/maker
-          - ../proto/dwtools/atop/maker/Maker.s
-          - ../proto/dwtools/atop/maker/Recipe.s
-          - ../proto/dwtools/atop/maker.test
-          - ../proto/dwtools/atop/maker.test/Maker.test.s
-          - ../proto/dwtools/tmp.tmp
-          - ../proto/dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e
-          - ../proto/dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1
+          - ../proto/wtools
+          - ../proto/wtools/Tools.s
+          - ../proto/wtools/abase
+          - ../proto/wtools/amid
+          - ../proto/wtools/atop
+          - ../proto/wtools/atop/-maker
+          - ../proto/wtools/atop/-maker/Maker.s
+          - ../proto/wtools/atop/-maker/Recipe.s
+          - ../proto/wtools/atop/-maker.test
+          - ../proto/wtools/atop/-maker.test/Maker.test.s
+          - ../proto/wtools/atop/maker
+          - ../proto/wtools/atop/maker/Maker.s
+          - ../proto/wtools/atop/maker/Recipe.s
+          - ../proto/wtools/atop/maker.test
+          - ../proto/wtools/atop/maker.test/Maker.test.s
+          - ../proto/wtools/tmp.tmp
+          - ../proto/wtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e
+          - ../proto/wtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/file1
           - >-
-            ../proto/dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp
+            ../proto/wtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test1.cpp
           - >-
-            ../proto/dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp
-          - ../proto/dwtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/out
+            ../proto/wtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/test2.cpp
+          - ../proto/wtools/tmp.tmp/b87767d5-6d46-a0a8-9e19-f35ceba5cb7e/out
     submodule:
       wTools:
         path: 'npm:///wTools'
@@ -931,7 +931,7 @@ module:
       entry.proto.no.tests:
         criterion:
           tests: no.tests
-        path: proto/dwtools/atop/maker/Maker.s
+        path: proto/wtools/atop/maker/Maker.s
       entry.proto.only.tests:
         criterion:
           tests: only.tests
@@ -941,13 +941,13 @@ module:
           debug: debug
           raw: raw
           content: prime
-        path: '{path::out.*=1}/source/dwtools/atop/maker/Maker.s'
+        path: '{path::out.*=1}/source/wtools/atop/maker/Maker.s'
       entry.out.raw.debug.release:
         criterion:
           debug: release
           raw: raw
           content: prime
-        path: '{path::out.*=1}/source/dwtools/atop/maker/Maker.s'
+        path: '{path::out.*=1}/source/wtools/atop/maker/Maker.s'
       entry.out.compiled.debug.debug:
         criterion:
           debug: debug
