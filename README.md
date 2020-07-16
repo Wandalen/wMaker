@@ -50,7 +50,7 @@ wMaker({ recipe : [ target ] }).form();
 ##### Example #2
 ```javascript
 /*example of using pre function in target*/
-var _ = wTools;
+let _ = wTools;
 var pre = function()
 { /*some useful code here for example creating *.cpp file */
   var code = 'int  main() { return 0; }';

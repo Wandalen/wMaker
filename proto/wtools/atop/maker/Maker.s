@@ -16,9 +16,9 @@ if( typeof module !== 'undefined' )
 
 //
 
-var _ = _global_.wTools;
-var Parent = null;
-var Self = function wMaker( o )
+let _ = _global_.wTools;
+let Parent = null;
+let Self = function wMaker( o )
 {
   return _.workpiece.construct( Self, this, arguments );
 }

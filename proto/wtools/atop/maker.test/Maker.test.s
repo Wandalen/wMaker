@@ -7,7 +7,7 @@ if( typeof module !== 'undefined' )
 
   let _ = require( '../../../wtools/Tools.s' );
 
-  var _ = _global_.wTools;
+  let _ = _global_.wTools;
 
   _.include( 'wTesting' );
 
@@ -18,8 +18,8 @@ if( typeof module !== 'undefined' )
 if( typeof module === 'undefined' )
 return;
 
-var _ = _global_.wTools;
-var Parent = _.Testing;
+let _ = _global_.wTools;
+let Parent = _.Testing;
 
 //
 
@@ -350,7 +350,7 @@ var pathsFor = function( test )
 
 //
 
-var Self =
+let Self =
 {
 
   name : 'Maker',
