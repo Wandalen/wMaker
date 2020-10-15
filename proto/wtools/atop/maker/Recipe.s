@@ -73,8 +73,8 @@ function form()
   if( recipe.shell && !_.strIs( recipe.shell ) )
   throw _.err( 'Recipe',recipe.name,'Expects string { shell }' );
 
-  if( recipe.pre && !_.routineIs( recipe.pre ) )
-  throw _.err( 'Recipe',recipe.name,'Expects routine { pre }' );
+  if( recipe.head && !_.routineIs( recipe.head ) )
+  throw _.err( 'Recipe',recipe.name,'Expects routine { head }' );
 
   if( recipe.post && !_.routineIs( recipe.post ) )
   throw _.err( 'Recipe',recipe.name,'Expects routine { post }' );
@@ -396,12 +396,12 @@ function _makeTarget()
     return con;
   }
 
-  /* pre */
+  /* head */
 
-  if( recipe.pre )
+  if( recipe.head )
   con.ifNoErrorThen( function( arg/*aaa*/ )
   {
-    return recipe.pre.call( maker,recipe );
+    return recipe.head.call( maker,recipe );
   });
 
   /* dependencies */
@@ -662,7 +662,7 @@ var Composes =
   shell : null,
   before : null,
   after : null,
-  pre : null,
+  head : null,
   post : null,
   debug : 0,
   beforeDirs : null,

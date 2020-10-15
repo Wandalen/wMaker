@@ -322,7 +322,7 @@ var recipe = _.like( abstract )
   shell : null,
   before : null,
   after : null,
-  pre : null,
+  head : null,
   post : null,
   debug : 0,
   beforeDirs : null,

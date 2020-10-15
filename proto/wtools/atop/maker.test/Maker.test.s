@@ -66,7 +66,7 @@ function cleanTestDir()
 
 //
 
-var pre = function pre()
+var head = function head()
 {
   var outPath = this.env.select( 'opt/outPath' );
   logger.log( 'outPath',outPath );
@@ -97,7 +97,7 @@ var simplest = function( test )
       after : '{{opt/outExe}}',
       before : [ '{{opt/src}}' ],
       shell : `g++ {{opt/src}} -o {{opt/outExe}}`,
-      pre : pre
+      head : head
     }
   ];
 
@@ -161,7 +161,7 @@ var recipeRunCheck = function( test )
   var file2 = _.path.join( basePath, 'file2');
 
   var called = false;
-  var pre = function(){ called = true; }
+  var head = function(){ called = true; }
 
   _.fileProvider.fileWrite
   ({
@@ -188,7 +188,7 @@ var recipeRunCheck = function( test )
         name : 'a1',
         after : `${file1}`,
         before : [ `${file2}` ],
-        pre : pre
+        head : head
       }
     ];
     var con = wMaker({ recipies : recipe }).form();
@@ -208,7 +208,7 @@ var recipeRunCheck = function( test )
         name : 'a2',
         after : `${file2}`,
         before : [ `${file1}` ],
-        pre : pre
+        head : head
       }
     ];
     test.case = 'after is newer then before';
@@ -227,7 +227,7 @@ var recipeRunCheck = function( test )
         name : 'a3',
         after : `${file1}`,
         before : [ `${file1}` ],
-        pre : pre
+        head : head
       }
     ];
     test.case = 'after == newer';
