@@ -86,7 +86,7 @@ function exec()
 
   _.assert( arguments.length === 0, 'Expects no arguments' );
 
-  var recipeName = _.process.args().subject;
+  var recipeName = _.process.input().subject;
 
   return maker.make( recipeName );
 }
