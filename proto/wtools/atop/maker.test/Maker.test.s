@@ -49,7 +49,7 @@ function testDirMake()
 {
   basePath = _.path.tempOpen( _.path.join( __dirname, '../..' ) );
 
-  _.mapOwnKeys( files )
+  _.mapOnlyOwnKeys( files )
   .forEach( ( name ) =>
   {
     var path = _.path.join( basePath, name );
