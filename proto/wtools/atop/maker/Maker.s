@@ -1,4 +1,5 @@
-( function _Maker_s_( ) {
+( function _Maker_s_( )
+{
 
 'use strict';
 
@@ -18,7 +19,8 @@ if( typeof module !== 'undefined' )
 
 let _ = _global_.wTools;
 let Parent = null;
-let Self = function wMaker( o )
+let Self = wMaker;
+function wMaker( o )
 {
   return _.workpiece.construct( Self, this, arguments );
 }
@@ -102,7 +104,7 @@ function recipeFor( recipe )
   if( _.strIs( recipe ) )
   {
     if( !maker.recipies[ recipe ] )
-    throw _.errBrief( 'Recipe',recipe,'does not exist!' );
+    throw _.errBrief( 'Recipe', recipe, 'does not exist!' );
     recipe = maker.recipies[ recipe ];
   }
 
@@ -126,7 +128,7 @@ function recipeNameGet( recipe )
   result = recipe.after;
   else if( _.arrayIs( recipe.after ) )
   result = recipe.after.join( ',' );
-  else throw _.err( 'no name for recipe',recipe );
+  else throw _.err( 'no name for recipe', recipe );
 
   // debugger;
   // result = recipe.env.resolve( result );
@@ -135,7 +137,7 @@ function recipeNameGet( recipe )
   debugger;
 
   if( !_.strDefined( result ) )
-  throw _.err( 'no name for recipe',recipe );
+  throw _.err( 'no name for recipe', recipe );
 
   return result;
 }
@@ -149,7 +151,7 @@ function recipesAdjust()
   /* */
 
   if( _.objectIs( maker.recipies ) )
-  for( var t in maker.recipies )
+  for( let t in maker.recipies )
   {
     var recipe = maker.recipies[ t ];
 
@@ -158,7 +160,7 @@ function recipesAdjust()
 
     recipe.name = maker.recipeNameGet( recipe );
     if( t !== recipe.name )
-    throw _.err( 'Name of recipe',recipe.name,'does not match key',t );
+    throw _.err( 'Name of recipe', recipe.name, 'does not match key', t );
 
     if( maker.defaultRecipeName === null )
     maker.defaultRecipeName = recipe.name;
@@ -168,15 +170,15 @@ function recipesAdjust()
   {
     var result = Object.create( null );
 
-    for( var t = 0 ; t < maker.recipies.length ; t++ )
+    for( let t = 0 ; t < maker.recipies.length ; t++ )
     {
-      var recipe = maker.recipies[ t ];
+      var recipe1 = maker.recipies[ t ];
 
-      recipe.name = maker.recipeNameGet( recipe );
-      result[ recipe.name ] = recipe;
+      recipe1.name = maker.recipeNameGet( recipe1 );
+      result[ recipe1.name ] = recipe1;
 
       if( maker.defaultRecipeName === null )
-      maker.defaultRecipeName = recipe.name;
+      maker.defaultRecipeName = recipe1.name;
     }
 
     maker.recipies = result;
@@ -187,22 +189,22 @@ function recipesAdjust()
   if( !_.objectIs( maker.recipies ) )
   throw _.err( 'Maker expects map {-recipe-}' )
 
-  for( var t in maker.recipies )
+  for( let t in maker.recipies )
   {
-    var recipe = maker.recipies[ t ] = new maker.Recipe( maker.recipies[ t ] );
-    recipe.maker = maker;
+    var recipe2 = maker.recipies[ t ] = new maker.Recipe( maker.recipies[ t ] );
+    recipe2.maker = maker;
   }
 
-  for( var t in maker.recipies )
+  for( let t in maker.recipies )
   {
-    var recipe = maker.recipies[ t ];
-    recipe.preform();
+    var recipe3 = maker.recipies[ t ];
+    recipe3.preform();
   }
 
-  for( var t in maker.recipies )
+  for( let t in maker.recipies )
   {
-    var recipe = maker.recipies[ t ];
-    recipe.form();
+    var recipe4 = maker.recipies[ t ];
+    recipe4.form();
   }
 
   // maker.env.resolveAndAssign();
@@ -224,12 +226,12 @@ function recipyWithBefore( before )
     for( var b = 0 ; b < before.length ; b++ )
     {
       var r = maker.recipyWithBefore( before[ b ] );
-      _.arrayAppendArray( result,r );
+      _.arrayAppendArray( result, r );
       return result;
     }
   }
 
-  for( var r in maker.recipies )
+  for( let r in maker.recipies )
   {
     var recipe = maker.recipies[ r ];
     var name = recipe.env.resolve( recipe.name );
@@ -274,7 +276,7 @@ function recipyWithBefore( before )
 //   if( _.arrayIs( result ) )
 //   return maker.pathsFor( result );
 //
-//   result = _.path.resolve( maker.currentPath,result );
+//   result = _.path.resolve( maker.currentPath, result );
 //
 //   return [ result ];
 // }
@@ -339,8 +341,8 @@ var recipeProcessed = _.like( recipe )
 
 var RecipeFields =
 {
-  'abstract' : abstract,
-  'recipe' : recipe,
+  abstract,
+  recipe,
   'recipe processed' : recipeProcessed,
 }
 
@@ -377,7 +379,7 @@ var Restricts =
 
 var Statics =
 {
-  RecipeFields : RecipeFields,
+  RecipeFields,
 }
 
 var Accessors =
@@ -400,32 +402,32 @@ var Forbids =
 var Proto =
 {
 
-  form : form,
-  make : make,
-  exec : exec,
+  form,
+  make,
+  exec,
 
-  recipeFor : recipeFor,
-  recipeNameGet : recipeNameGet,
-  recipesAdjust : recipesAdjust,
+  recipeFor,
+  recipeNameGet,
+  recipesAdjust,
 
-  recipyWithBefore : recipyWithBefore,
+  recipyWithBefore,
 
 
   // etc
 
   // pathsFor : pathsFor,
-  _optSet : _optSet,
-  _recipiesSet : _recipiesSet,
+  _optSet,
+  _recipiesSet,
 
 
   //
 
 
-  Composes : Composes,
-  Aggregates : Aggregates,
-  Associates : Associates,
-  Restricts : Restricts,
-  Statics : Statics,
+  Composes,
+  Aggregates,
+  Associates,
+  Restricts,
+  Statics,
 
 }
 
@@ -440,8 +442,8 @@ _.classDeclare
 
 _.Copyable.mixin( Self );
 
-_.accessor.declare( Self.prototype,Accessors );
-_.accessor.declare( Self.prototype,Forbids );
+_.accessor.declare( Self.prototype, Accessors );
+_.accessor.declare( Self.prototype, Forbids );
 
 _.prototypeCrossRefer
 ({
