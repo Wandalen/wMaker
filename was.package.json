@@ -24,10 +24,9 @@
   {
     "wLogger" : "",
     "wTools" : "",
-    "wtemplatetree" : "",
     "wtemplatetreeenvironment" : "",
     "wtemplatetreeresolver" : ""
   },
-  "devDependencies" : { "wTesting" : "" },
+  "devDependencies" : { "wTesting" : "", "wmaker" : "file:." },
   "keywords" : [ "wTools", "make" ]
 }

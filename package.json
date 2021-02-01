@@ -41,7 +41,6 @@
   "dependencies": {
     "wLogger": "alpha",
     "wTools": "alpha",
-    "wtemplatetree": "alpha",
     "wtemplatetreeenvironment": "alpha",
     "wtemplatetreeresolver": "alpha"
   },
