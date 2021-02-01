@@ -1,4 +1,5 @@
-( function _Maker_test_s_( ) {
+( function _Maker_test_s_( )
+{
 
 'use strict';
 
@@ -7,7 +8,7 @@ if( typeof module !== 'undefined' )
 
   let _ = require( '../../../wtools/Tools.s' );
 
-  let _ = _global_.wTools;
+  // let _ = _global_.wTools;
 
   _.include( 'wTesting' );
 
@@ -66,10 +67,11 @@ function cleanTestDir()
 
 //
 
-var head = function head()
+
+function head()
 {
   var outPath = this.env.select( 'opt/outPath' );
-  logger.log( 'outPath',outPath );
+  logger.log( 'outPath', outPath );
   _.fileProvider.dirMake( outPath );
 };
 
@@ -78,12 +80,11 @@ var head = function head()
 var exe = process.platform === `win32` ? `.exe` : ``;
 
 
-
-var simplest = function( test )
+function simplest( test )
 {
   var opt =
   {
-    basePath: basePath,
+    basePath,
     outPath : `{{opt/basePath}}/out`,
     outExe : `{{opt/outPath}}/test1${exe}`,
     src : `{{opt/basePath}}/test1.cpp`,
@@ -97,13 +98,13 @@ var simplest = function( test )
       after : '{{opt/outExe}}',
       before : [ '{{opt/src}}' ],
       shell : `g++ {{opt/src}} -o {{opt/outExe}}`,
-      head : head
+      head
     }
   ];
 
   var o =
   {
-    opt : opt,
+    opt,
     recipies : recipe,
   };
 
@@ -118,12 +119,12 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath,`out/test1${exe}` ) ) != undefined;
-    test.identical( got,true );
+    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath, `out/test1${exe}` ) ) !== undefined;
+    test.identical( got, true );
   })
   .ifNoErrorThen(function()
   {
-    test.case = "try to make obj file ";
+    test.case = 'try to make obj file ';
 
     var recipe =
     [
@@ -137,7 +138,7 @@ var simplest = function( test )
 
     var o =
     {
-      opt : opt,
+      opt,
       recipies : recipe,
     };
 
@@ -146,8 +147,8 @@ var simplest = function( test )
   })
   .ifNoErrorThen(function()
   {
-    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath,`out/test2.o` ) ) != undefined;
-    test.identical( got,true );
+    var got = _.fileProvider.statResolvedRead( _.path.join( opt.basePath, `out/test2.o` ) ) !== undefined;
+    test.identical( got, true );
   });
 
   return con;
@@ -155,28 +156,28 @@ var simplest = function( test )
 
 //
 
-var recipeRunCheck = function( test )
+function recipeRunCheck( test )
 {
   var file1 = _.path.join( basePath, 'file1');
   var file2 = _.path.join( basePath, 'file2');
 
   var called = false;
-  var head = function(){ called = true; }
+  function head(){ called = true; }
 
   _.fileProvider.fileWrite
   ({
-      filePath : file1,
-      data : 'abc',
-      sync : 1,
+    filePath : file1,
+    data : 'abc',
+    sync : 1,
   });
   var con = _.time.out( 1000 );
   con.finally( function( )
   {
     _.fileProvider.fileWrite
     ({
-       filePath : file2,
-       data : 'bca',
-       sync : 1,
+      filePath : file2,
+      data : 'bca',
+      sync : 1,
     });
   })
   .ifNoErrorThen( function( arg/*aaa*/ )
@@ -188,7 +189,7 @@ var recipeRunCheck = function( test )
         name : 'a1',
         after : `${file1}`,
         before : [ `${file2}` ],
-        head : head
+        head
       }
     ];
     var con = wMaker({ recipies : recipe }).form();
@@ -197,7 +198,7 @@ var recipeRunCheck = function( test )
   .ifNoErrorThen( function( arg/*aaa*/ )
   {
     //if no error recipe is done
-    test.identical( called , true );
+    test.identical( called, true );
   })
   .ifNoErrorThen( function( arg/*aaa*/ )
   {
@@ -208,7 +209,7 @@ var recipeRunCheck = function( test )
         name : 'a2',
         after : `${file2}`,
         before : [ `${file1}` ],
-        head : head
+        head
       }
     ];
     test.case = 'after is newer then before';
@@ -227,7 +228,7 @@ var recipeRunCheck = function( test )
         name : 'a3',
         after : `${file1}`,
         before : [ `${file1}` ],
-        head : head
+        head
       }
     ];
     test.case = 'after == newer';
@@ -244,9 +245,9 @@ var recipeRunCheck = function( test )
 
 //
 
-var targetsAdjust = function( test )
+function targetsAdjust( test )
 {
-  test.case = "check targets dependencies";
+  test.case = 'check targets dependencies';
   var recipe =
   [
     {
@@ -257,7 +258,7 @@ var targetsAdjust = function( test )
     {
       name : 'second',
       after : [ 'a2' ],
-      before : [ 'first','a2.cpp' ],
+      before : [ 'first', 'a2.cpp' ],
     }
   ];
 
@@ -287,11 +288,11 @@ var targetsAdjust = function( test )
 
 //
 
-var targetInvestigateUpToDate = function( test )
+function targetInvestigateUpToDate( test )
 {
   var opt =
   {
-    basePath: basePath,
+    basePath,
   };
 
   var recipe =
@@ -300,28 +301,28 @@ var targetInvestigateUpToDate = function( test )
       name : 'test2',
       after : `{{opt/basePath}}`,
       before : [ `{{opt/basePath}}` ],
-      opt : opt
+      opt
     }
   ];
 
-  test.case = "compare two indentical files";
-  var maker = wMaker({ opt : opt, recipies : recipe });
+  test.case = 'compare two indentical files';
+  var maker = wMaker({ opt, recipies : recipe });
   maker.form();
   var t = maker.recipies[ recipe[ 0 ].name ];
   var got = t.upToDate;
   test.identical( got, true );
 
-  test.case = "compare src with output";
+  test.case = 'compare src with output';
   var recipe =
   [
     {
       name : 'test3',
       after : `{{opt/basePath}}/1.o`,
       before : [ `{{opt/basePath}}` ],
-      opt : opt
+      opt
     }
   ];
-  var maker = wMaker({ opt : opt, recipies : recipe, defaultRecipeName : 'test3' });
+  var maker = wMaker({ opt, recipies : recipe, defaultRecipeName : 'test3' });
   maker.form();
   var t = maker.recipies[ recipe[ 0 ].name ];
   var got = t.upToDate
@@ -330,9 +331,9 @@ var targetInvestigateUpToDate = function( test )
 
 //
 
-var pathsFor = function( test )
+function pathsFor( test )
 {
-  test.case = "check if relative paths are generated correctly";
+  test.case = 'check if relative paths are generated correctly';
   var maker = wMaker({ recipies : [ { name : 'test', before : [] } ] });
   maker.form();
   var recipe = maker.recipies[ 'test' ];
@@ -363,14 +364,14 @@ let Self =
   tests :
   {
 
-    simplest : simplest,
-    recipeRunCheck : recipeRunCheck,
-    targetsAdjust : targetsAdjust,
-    targetInvestigateUpToDate : targetInvestigateUpToDate,
+    simplest,
+    recipeRunCheck,
+    targetsAdjust,
+    targetInvestigateUpToDate,
 
     //etc
 
-    pathsFor : pathsFor,
+    pathsFor,
 
   },
 
