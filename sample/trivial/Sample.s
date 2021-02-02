@@ -19,6 +19,6 @@ var target =
 ]
 
 if( module.isBrowser )
-wMaker({ recipe : target }).form();
+wMaker({ recipies : target }).form();
 else
-wMaker({ recipe : target }).exec();
+wMaker({ recipies : target }).exec();
