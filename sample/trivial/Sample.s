@@ -2,23 +2,44 @@
 if( typeof module !== 'undefined' )
 require( 'wmaker' );
 
-var target =
+let _ = wTools;
+
+if( process.platform === 'win32' )
+{
+  console.log( 'The current OS can has no GNU compiler' );
+  return;
+}
+
+let provider = _.fileProvider;
+let data =
+`
+#include <iostream>
+
+int main()
+{
+  std::cout << "abc" << std::endl;
+  return 0;
+}
+`;
+provider.fileWrite( _.path.join( __dirname, 'file.cpp' ), data );
+
+let sourceFile = _.path.join( __dirname, 'file.cpp' );
+let objectFile = _.path.join( __dirname, `file.o` );
+let recipe =
 [
   {
-    name : 't1',
-    after : 'my_file.o',
-    before : 'my_file.cpp',
-    shell : `g++ -c my_file.cpp -o my_file.o`
+    name : 'compile object file',
+    after : objectFile,
+    before : [ sourceFile ],
+    shell : `g++ -c ${ sourceFile } -o ${ objectFile }`,
   },
-  {
-    name : 't2',
-    after : 'my_file', /*on windows: my_file.exe*/
-    before : 'my_file.o',
-    shell : `g++ my_file.o -o my_file`
-  }
-]
+];
 
-if( module.isBrowser )
-wMaker({ recipies : target }).form();
-else
-wMaker({ recipies : target }).exec();
+let maker = wMaker({ recipies : recipe }).form();
+maker.then( () =>
+{
+  /* clean, comment it to show output files */
+  provider.filesDelete( sourceFile );
+  provider.filesDelete( objectFile );
+  return null;
+});
