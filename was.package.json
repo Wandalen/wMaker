@@ -22,11 +22,12 @@
   },
   "dependencies" :
   {
-    "wLogger" : "",
     "wTools" : "",
+    "wLogger" : "",
+    "wFiles" : "",
     "wtemplatetreeenvironment" : "",
     "wtemplatetreeresolver" : ""
   },
-  "devDependencies" : { "wTesting" : "", "wmaker" : "file:." },
+  "devDependencies" : { "wTesting" : "", "eslint" : "7.1.0", "wmaker" : "file:." },
   "keywords" : [ "wTools", "make" ]
 }
