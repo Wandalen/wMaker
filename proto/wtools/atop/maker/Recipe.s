@@ -102,10 +102,14 @@ function form()
   if( recipe.kind === 'recipe' )
   {
 
-    if( !recipe.beforeDirs )
-    recipe.beforeDirs = [];
-    else
+    if( recipe.beforeDirs )
     recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
+    else
+    recipe.beforeDirs = [];
+    // if( !recipe.beforeDirs )
+    // recipe.beforeDirs = [];
+    // else
+    // recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
 
     recipe.after = _.arrayAs( recipe.after );
     recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
