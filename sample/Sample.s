@@ -23,15 +23,15 @@ var target =
     name : 't1',
     after : objectFile,
     before : sourceFile,
-    shell : `g++ -c ${ sourceFile } -o ${ objectFile }`
+    shell : `g++ -c ${ _.path.nativize( sourceFile ) } -o ${ _.path.nativize( objectFile ) }`,
   },
   {
     name : 't2',
     after : exeFile, /*on windows: my_file.exe*/
     before : objectFile,
-    shell : `g++ ${ objectFile } -o ${ exeFile }`
+    shell : `g++ ${ _.path.nativize( objectFile ) } -o ${ _.path.nativize( exeFile ) }`,
   }
-]
+];
 
 let maker;
 if( module.isBrowser )
