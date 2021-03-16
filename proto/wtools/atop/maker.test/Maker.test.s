@@ -113,7 +113,6 @@ function simplest( test )
   con.ifNoErrorThen(function()
   {
     test.case = 'simple make';
-    debugger
     var con = wMaker( o ).form();
     return test.returnsSingleResource( con );
   })
