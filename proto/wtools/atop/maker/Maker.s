@@ -130,11 +130,7 @@ function recipeNameGet( recipe )
   result = recipe.after.join( ',' );
   else throw _.err( 'no name for recipe', recipe );
 
-  // debugger;
   // result = recipe.env.resolve( result );
-
-  if( !_.strDefined( result ) )
-  debugger;
 
   if( !_.strDefined( result ) )
   throw _.err( 'no name for recipe', recipe );
