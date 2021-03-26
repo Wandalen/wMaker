@@ -17,9 +17,9 @@ if( typeof module !== 'undefined' )
 
 //
 
-let _ = _global_.wTools;
-let Parent = null;
-let Self = wMaker;
+const _ = _global_.wTools;
+const Parent = null;
+const Self = wMaker;
 function wMaker( o )
 {
   return _.workpiece.construct( Self, this, arguments );
@@ -395,7 +395,7 @@ var Forbids =
 // declare
 // --
 
-var Proto =
+const Proto =
 {
 
   form,

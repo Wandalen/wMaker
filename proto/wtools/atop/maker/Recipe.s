@@ -5,9 +5,9 @@
 
 //
 
-let _ = _global_.wTools;
-let Parent = null;
-let Self = wRecipe;
+const _ = _global_.wTools;
+const Parent = null;
+const Self = wRecipe;
 function wRecipe( o )
 {
   return _.workpiece.construct( Self, this, arguments );
@@ -62,7 +62,7 @@ function form()
 
   // _.assert( recipe.name === maker.recipeNameGet( recipe ) );
 
-  // var but = _.mapKeys( _.mapBut( recipe,maker.RecipeFields[ 'recipe' ] ) );
+  // var but = _.mapKeys( _.mapBut_( null, recipe,maker.RecipeFields[ 'recipe' ] ) );
   // if( but.length )
   // throw _.err( 'Recipe', recipe.name, 'should not have fields', but );
 
@@ -698,7 +698,7 @@ var Forbids =
 // declare
 // --
 
-var Proto =
+const Proto =
 {
 
   preform,
