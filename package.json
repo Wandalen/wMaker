@@ -1,6 +1,6 @@
 {
   "name" : "wmaker",
-  "version" : "0.3.218",
+  "version" : "0.3.219",
   "engine" : "node >= 10.0.0",
   "enabled" : 1,
   "description" : "Analog of so-called 'make' in Java Script.",
@@ -11,7 +11,7 @@
     { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
   ],
   "license" : "MIT",
-  "main" : "/pro/module/wMaker/proto/node_modules/wmaker",
+  "main" : "proto/node_modules/wmaker",
   "files" : [ "proto/wtools/atop/maker", "proto/wtools/Tools.s", "out", "proto/node_modules" ],
   "directories" : { "test" : "wtest .run 'proto/**' rapidity:-3", "doc" : "doc", "main" : "proto/wtools/atop/maker/Maker.s" },
   "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
