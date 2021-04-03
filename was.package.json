@@ -11,7 +11,7 @@
     { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
   ],
   "license" : "MIT",
-  "main" : "proto/wtools/atop/maker/Maker.s",
+  "main" : "/pro/module/wMaker/proto/node_modules/wmaker",
   "files" : [ "proto/wtools/atop/maker", "proto/wtools/Tools.s", "out", "proto/node_modules" ],
   "directories" : { "test" : "wtest .run 'proto/**' rapidity:-3", "doc" : "doc", "main" : "proto/wtools/atop/maker/Maker.s" },
   "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
