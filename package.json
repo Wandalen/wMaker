@@ -1,57 +1,33 @@
 {
-  "name": "wmaker",
-  "version": "0.3.217",
-  "engine": "node >= 10.0.0",
-  "enabled": 1,
-  "description": "Analog of so-called 'make' in Java Script.",
-  "author": "Kostiantyn Wandalen <wanalen@01.school>",
-  "contributors": [
-    {
-      "name": "Kostiantyn Wandalen",
-      "email": "wanalen@01.school"
-    },
-    {
-      "name": "Volodymyr M.",
-      "email": "volodymyr.migdal@gmail.com"
-    }
+  "name" : "wmaker",
+  "version" : "0.3.218",
+  "engine" : "node >= 10.0.0",
+  "enabled" : 1,
+  "description" : "Analog of so-called 'make' in Java Script.",
+  "author" : "Kostiantyn Wandalen <wanalen@01.school>",
+  "contributors" :
+  [
+    { "name" : "Kostiantyn Wandalen", "email" : "wanalen@01.school" },
+    { "name" : "Volodymyr M.", "email" : "volodymyr.migdal@gmail.com" }
   ],
-  "license": "MIT",
-  "main": "proto/wtools/atop/maker/Maker.s",
-  "files": [
-    "proto/wtools/atop/maker",
-    "proto/wtools/Tools.s",
-    "out",
-    "proto/node_modules"
-  ],
-  "directories": {
-    "test": "wtest .run 'proto/**' rapidity:-3",
-    "doc": "doc",
-    "main": "proto/wtools/atop/maker/Maker.s"
+  "license" : "MIT",
+  "main" : "/pro/module/wMaker/proto/node_modules/wmaker",
+  "files" : [ "proto/wtools/atop/maker", "proto/wtools/Tools.s", "out", "proto/node_modules" ],
+  "directories" : { "test" : "wtest .run 'proto/**' rapidity:-3", "doc" : "doc", "main" : "proto/wtools/atop/maker/Maker.s" },
+  "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
+  "repository" : { "type" : "git", "url" : "https://github.com/Wandalen/wMaker.git" },
+  "bugs" :
+  {
+    "url" : "https://github.com/Wandalen/wMaker/issues"
   },
-  "scripts": {
-    "test": "wtest .run 'proto/**' rapidity:-3",
-    "docgen": "wdocgen proto"
+  "dependencies" :
+  {
+    "wTools" : "delta",
+    "wLogger" : "delta",
+    "wFiles" : "delta",
+    "wtemplatetreeenvironment" : "delta",
+    "wtemplatetreeresolver" : "delta"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Wandalen/wMaker.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Wandalen/wMaker/issues"
-  },
-  "dependencies": {
-    "wTools": "delta",
-    "wLogger": "delta",
-    "wFiles": "delta",
-    "wtemplatetreeenvironment": "delta",
-    "wtemplatetreeresolver": "delta"
-  },
-  "devDependencies": {
-    "eslint": "7.1.0",
-    "wTesting": "delta"
-  },
-  "keywords": [
-    "wTools",
-    "make"
-  ]
+  "devDependencies" : { "eslint" : "7.1.0", "wTesting" : "delta" },
+  "keywords" : [ "wTools", "make" ]
 }
