@@ -1554,6 +1554,4 @@ module:
       ../.im.will.yml:
         hash: e868e4a2af960a73a948e3734391103b
         size: 5265
-      wMaker.out.will.yml:
-        hash: 0901a998b74fbcd05e887efbe91c8eb6
-        size: 39922
+      wMaker.out.will.yml: *ref_0
