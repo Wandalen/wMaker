@@ -89,8 +89,8 @@ path:
       raw: compiled
       content: prime
   npm.proto.entry:
-    - /pro/module/wMaker/proto/wtools/atop/maker/Maker.s
-    - /pro/module/wMaker/proto/node_modules/wmaker
+    - proto/wtools/atop/maker/Maker.s
+    - proto/node_modules/wmaker
 reflector:
   reflect.proto:
     inherit: predefined.*
