@@ -2,15 +2,12 @@ format: outwillfile-2.0
 root:
   - wMaker.out
 consistency:
-  wMaker.out.will.yml: &ref_0
-    hash: 0901a998b74fbcd05e887efbe91c8eb6
-    size: 39922
-  ../.ex.will.yml: &ref_1
+  ../.ex.will.yml: &ref_0
     hash: c42c1409761716c9d3f6f84bd6bc6f51
     size: 1733
-  ../.im.will.yml: &ref_2
-    hash: e868e4a2af960a73a948e3734391103b
-    size: 5265
+  ../.im.will.yml: &ref_1
+    hash: b836d86e0cc179879f168f0b70e2832b
+    size: 5227
 module:
   wMaker.out:
     about:
@@ -19,20 +16,20 @@ module:
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters:
+      interpreters: &ref_2
         - njs >= 10.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords:
+      keywords: &ref_3
         - wTools
         - make
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
+      contributors: &ref_4
         - Kostiantyn Wandalen <wanalen@01.school>
         - Volodymyr M. <volodymyr.migdal@gmail.com>
       npm.name: wmaker
-      npm.scripts:
+      npm.scripts: &ref_5
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -733,24 +730,6 @@ module:
           content: prime
         inherit:
           - files.transpile
-      exported.proto.export:
-        opts:
-          filePath: 'reflector::exported.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
-      exported.files.proto.export:
-        opts:
-          filePath: 'reflector::exported.files.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
     build:
       proto.export:
         steps:
@@ -839,9 +818,8 @@ module:
           content: proto
           export: 1
     consistency:
-      wMaker.out.will.yml: *ref_0
-      ../.ex.will.yml: *ref_1
-      ../.im.will.yml: *ref_2
+      ../.ex.will.yml: *ref_0
+      ../.im.will.yml: *ref_1
   ../:
     about:
       name: wMaker
@@ -849,22 +827,13 @@ module:
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters:
-        - njs >= 10.0.0
-        - chrome >= 60.0.0
-        - firefox >= 60.0.0
-      keywords:
-        - wTools
-        - make
+      interpreters: *ref_2
+      keywords: *ref_3
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
-        - Kostiantyn Wandalen <wanalen@01.school>
-        - Volodymyr M. <volodymyr.migdal@gmail.com>
+      contributors: *ref_4
       npm.name: wmaker
-      npm.scripts:
-        test: wtest .run proto/**
-        docgen: wdocgen .build proto
+      npm.scripts: *ref_5
     path:
       module.willfiles:
         criterion:
@@ -1552,6 +1521,5 @@ module:
         hash: c42c1409761716c9d3f6f84bd6bc6f51
         size: 1733
       ../.im.will.yml:
-        hash: e868e4a2af960a73a948e3734391103b
-        size: 5265
-      wMaker.out.will.yml: *ref_0
+        hash: b836d86e0cc179879f168f0b70e2832b
+        size: 5227
