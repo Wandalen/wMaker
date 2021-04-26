@@ -1,6 +1,6 @@
 {
   "name" : "wmaker",
-  "version" : "0.3.226",
+  "version" : "0.3.227",
   "engine" : "node >= 10.0.0",
   "enabled" : 1,
   "description" : "Analog of so-called 'make' in Java Script.",
@@ -22,12 +22,12 @@
   },
   "dependencies" :
   {
-    "wTools" : "delta",
-    "wLogger" : "delta",
-    "wFiles" : "delta",
-    "wtemplatetreeenvironment" : "delta",
-    "wtemplatetreeresolver" : "delta"
+    "wTools" : "gamma",
+    "wLogger" : "gamma",
+    "wFiles" : "gamma",
+    "wtemplatetreeenvironment" : "gamma",
+    "wtemplatetreeresolver" : "gamma"
   },
-  "devDependencies" : { "eslint" : "7.1.0", "wTesting" : "delta" },
+  "devDependencies" : { "eslint" : "7.1.0", "wTesting" : "gamma" },
   "keywords" : [ "wTools", "make" ]
 }
