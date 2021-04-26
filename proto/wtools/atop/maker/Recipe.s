@@ -62,7 +62,7 @@ function form()
 
   // _.assert( recipe.name === maker.recipeNameGet( recipe ) );
 
-  // var but = _.mapKeys( _.mapBut_( null, recipe,maker.RecipeFields[ 'recipe' ] ) );
+  // var but = _.props.keys( _.mapBut_( null, recipe,maker.RecipeFields[ 'recipe' ] ) );
   // if( but.length )
   // throw _.err( 'Recipe', recipe.name, 'should not have fields', but );
 
