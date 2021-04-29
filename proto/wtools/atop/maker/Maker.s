@@ -146,7 +146,7 @@ function recipesAdjust()
 
   /* */
 
-  if( _.objectIs( maker.recipies ) )
+  if( _.object.isBasic( maker.recipies ) )
   for( let t in maker.recipies )
   {
     var recipe = maker.recipies[ t ];
@@ -182,7 +182,7 @@ function recipesAdjust()
 
   /* */
 
-  if( !_.objectIs( maker.recipies ) )
+  if( !_.object.isBasic( maker.recipies ) )
   throw _.err( 'Maker expects map {-recipe-}' )
 
   for( let t in maker.recipies )
