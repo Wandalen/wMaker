@@ -2,12 +2,9 @@ format: outwillfile-2.0
 root:
   - wMaker.out
 consistency:
-  ../.ex.will.yml: &ref_0
-    hash: c42c1409761716c9d3f6f84bd6bc6f51
-    size: 1733
-  ../.im.will.yml: &ref_1
-    hash: b836d86e0cc179879f168f0b70e2832b
-    size: 5227
+  ../will.yml: &ref_0
+    hash: 9090f7182dfbf7f32f6e19f6ae32cee2
+    size: 6721
 module:
   wMaker.out:
     about:
@@ -16,20 +13,20 @@ module:
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters: &ref_2
+      license: MIT
+      npm.name: wmaker
+      author: Kostiantyn Wandalen <wanalen@01.school>
+      keywords: &ref_1
+        - wTools
+        - make
+      contributors: &ref_2
+        - Kostiantyn Wandalen <wanalen@01.school>
+        - Volodymyr M. <volodymyr.migdal@gmail.com>
+      interpreters: &ref_3
         - njs >= 10.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords: &ref_3
-        - wTools
-        - make
-      license: MIT
-      author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors: &ref_4
-        - Kostiantyn Wandalen <wanalen@01.school>
-        - Volodymyr M. <volodymyr.migdal@gmail.com>
-      npm.name: wmaker
-      npm.scripts: &ref_5
+      npm.scripts: &ref_4
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -44,15 +41,11 @@ module:
       module.original.willfiles:
         criterion:
           predefined: 1
-        path:
-          - ../.ex.will.yml
-          - ../.im.will.yml
+        path: ../will.yml
       module.peer.willfiles:
         criterion:
           predefined: 1
-        path:
-          - ../.ex.will.yml
-          - ../.im.will.yml
+        path: ../will.yml
       module.peer.in:
         criterion:
           predefined: 1
@@ -197,11 +190,11 @@ module:
         path: 'npm:///wFiles'
         autoExporting: 0
         enabled: 0
-      wTemplateTreeEnvironment:
+      wtemplatetreeenvironment:
         path: 'npm:///wtemplatetreeenvironment'
         autoExporting: 0
         enabled: 0
-      wTemplateTreeresolver:
+      wtemplatetreeresolver:
         path: 'npm:///wtemplatetreeresolver'
         autoExporting: 0
         enabled: 0
@@ -216,7 +209,7 @@ module:
         autoExporting: 0
         enabled: 0
         criterion:
-          debug: 1
+          development: 1
       wTesting:
         path: 'npm:///wTesting'
         autoExporting: 0
@@ -818,8 +811,7 @@ module:
           content: proto
           export: 1
     consistency:
-      ../.ex.will.yml: *ref_0
-      ../.im.will.yml: *ref_1
+      ../will.yml: *ref_0
   ../:
     about:
       name: wMaker
@@ -827,26 +819,22 @@ module:
       description: Analog of so-called 'make' in Java Script.
       enabled: 1
       version: 0.4.0
-      interpreters: *ref_2
-      keywords: *ref_3
       license: MIT
-      author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors: *ref_4
       npm.name: wmaker
-      npm.scripts: *ref_5
+      author: Kostiantyn Wandalen <wanalen@01.school>
+      keywords: *ref_1
+      contributors: *ref_2
+      interpreters: *ref_3
+      npm.scripts: *ref_4
     path:
       module.willfiles:
         criterion:
           predefined: 1
-        path:
-          - .ex.will.yml
-          - .im.will.yml
+        path: will.yml
       module.original.willfiles:
         criterion:
           predefined: 1
-        path:
-          - .ex.will.yml
-          - .im.will.yml
+        path: will.yml
       module.peer.willfiles:
         criterion:
           predefined: 1
@@ -960,11 +948,11 @@ module:
         path: 'npm:///wFiles'
         autoExporting: 0
         enabled: 0
-      wTemplateTreeEnvironment:
+      wtemplatetreeenvironment:
         path: 'npm:///wtemplatetreeenvironment'
         autoExporting: 0
         enabled: 0
-      wTemplateTreeresolver:
+      wtemplatetreeresolver:
         path: 'npm:///wtemplatetreeresolver'
         autoExporting: 0
         enabled: 0
@@ -979,7 +967,7 @@ module:
         autoExporting: 0
         enabled: 0
         criterion:
-          debug: 1
+          development: 1
       wTesting:
         path: 'npm:///wTesting'
         autoExporting: 0
@@ -1517,9 +1505,6 @@ module:
           - 'build::release'
           - 'build::npm'
     consistency:
-      ../.ex.will.yml:
-        hash: c42c1409761716c9d3f6f84bd6bc6f51
-        size: 1733
-      ../.im.will.yml:
-        hash: b836d86e0cc179879f168f0b70e2832b
-        size: 5227
+      ../will.yml:
+        hash: 9090f7182dfbf7f32f6e19f6ae32cee2
+        size: 6721
