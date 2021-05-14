@@ -640,7 +640,7 @@ function _pathsFor( paths, dir )
 }
 
 // --
-// relationship
+// relations
 // --
 
 var Composes =

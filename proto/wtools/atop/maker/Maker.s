@@ -343,7 +343,7 @@ var RecipeFields =
 }
 
 // --
-// relationship
+// relations
 // --
 
 var optSymbol = Symbol.for( 'opt' );
