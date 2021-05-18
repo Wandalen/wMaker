@@ -97,16 +97,16 @@ function form()
   {
 
     if( recipe.beforeDirs )
-    recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
+    recipe.beforeDirs = _.array.as( recipe.beforeDirs );
     else
     recipe.beforeDirs = [];
     // if( !recipe.beforeDirs )
     // recipe.beforeDirs = [];
     // else
-    // recipe.beforeDirs = _.arrayAs( recipe.beforeDirs );
+    // recipe.beforeDirs = _.array.as( recipe.beforeDirs );
 
-    recipe.after = _.arrayAs( recipe.after );
-    recipe.before = _.arrayAs( _.arrayFlatten( [], recipe.before ) );
+    recipe.after = _.array.as( recipe.after );
+    recipe.before = _.array.as( _.arrayFlatten( [], recipe.before ) );
     recipe.beforeNodes = Object.create( null );
     recipe.afterNodes = Object.create( null );
 
