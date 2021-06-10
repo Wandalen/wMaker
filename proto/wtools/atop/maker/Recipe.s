@@ -41,9 +41,6 @@ function form()
   var recipe = this;
   var maker = recipe.maker;
 
-  // if( recipe.kind === 'file' )
-  // debugger;
-
   // if( !recipe.env )
   // recipe.env = wTemplateTreeResolver({ tree : { opt : maker.opt, recipe, recipies : maker.recipies } });
 
@@ -52,7 +49,7 @@ function form()
 
   /* verification */
 
-  _.assert( maker, 'Expects { maker }' );
+  _.assert( !!maker, 'Expects { maker }' );
   _.assert( arguments.length === 0, 'Expects no arguments' );
   _.assert( !recipe._formed );
   // _.assert( recipe._preformed );
@@ -123,12 +120,12 @@ function form()
 
     /* validation */
 
-    _.assert( _.arrayIs( recipe.after ) );
-    _.assert( _.arrayIs( recipe.before ) );
+    _.assert( _.array.is( recipe.after ) );
+    _.assert( _.array.is( recipe.before ) );
 
   }
 
-  _.assert( recipe.env );
+  _.assert( !!recipe.env );
 
   recipe._formed = 1;
 
@@ -143,8 +140,8 @@ function hasAfter( after )
   var maker = recipe.maker;
 
   _.assert( arguments.length === 1, 'Expects single argument' );
-  _.assert( _.strIs( after ) );
-  _.assert( recipe.env );
+  _.assert( _.str.is( after ) );
+  _.assert( !!recipe.env );
 
   for( var a = 0 ; a < recipe.after.length ; a++ )
   {
@@ -182,9 +179,6 @@ function subFrom( name, nodes )
   _.assert( arguments.length === 2, 'Expects exactly two arguments' );
 
   var before = recipe.env.resolve( name );
-
-  // if( name === '{{recipe/opt/outBuildPath}}/main.o' )
-  // debugger;
 
   result = maker.recipyWithBefore( before );
 
@@ -329,7 +323,7 @@ function investigateUpToDateFile( file )
   var recipe = this;
   var maker = recipe.maker;
 
-  _.assert( recipe );
+  _.assert( !!recipe );
   _.assert( arguments.length === 1, 'Expects single argument' );
 
   if( file.upToDate !== undefined )
@@ -485,9 +479,6 @@ function _makeTargetDependencies( con )
 
     // logger.log( 'node.kind',node.kind );
 
-    // if( node._dirs && node._dirs.length )
-    // debugger;
-
     if( node.kind === 'recipe' )
     {
       con.ifNoErrorThen( _.routineSeal( node, node._makeTarget ) );
@@ -519,9 +510,6 @@ function filesMissed()
 
   for( var d = 0 ; d < dirs.length ; d++ )
   {
-
-    // if( path === '{{opt/containerHpp}}' )
-    // debugger;
 
     // var paths = maker.pathsFor( _.path.join( dirs[ d ],path ) );
     // var paths = maker.pathsFor( path );
@@ -623,7 +611,7 @@ function _pathsFor( paths, dir )
 
   var result = paths;
 
-  _.assert( recipe.env );
+  _.assert( !!recipe.env );
 
   result = recipe.env.resolve( result );
   result = _.path.s.join( dir, result );
