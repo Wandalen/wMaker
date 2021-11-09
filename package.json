@@ -1,6 +1,6 @@
 {
   "name": "wmaker",
-  "version": "0.3.263",
+  "version": "0.3.264",
   "engine": "node >= 10.0.0",
   "enabled": 1,
   "description": "Analog of so-called 'make' in Java Script.",
@@ -41,14 +41,14 @@
     "url": "https://github.com/Wandalen/wMaker/issues"
   },
   "dependencies": {
-    "wTools": "gamma",
-    "wtemplatetreeresolver": "gamma",
-    "wtemplatetreeenvironment": "gamma",
-    "wLogger": "gamma",
-    "wFiles": "gamma"
+    "wTools": "delta",
+    "wtemplatetreeresolver": "delta",
+    "wtemplatetreeenvironment": "delta",
+    "wLogger": "delta",
+    "wFiles": "delta"
   },
   "devDependencies": {
-    "wTesting": "gamma",
+    "wTesting": "delta",
     "eslint": "7.32.0"
   },
   "keywords": [
