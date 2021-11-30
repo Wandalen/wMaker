@@ -3,8 +3,8 @@ root:
   - wMaker.out
 consistency:
   ../will.yml: &ref_0
-    hash: e05420ead1795537c93fc010077b1215
-    size: 6580
+    hash: 151b1ff50509a58ca0158b822dfd135c
+    size: 6588
 module:
   wMaker.out:
     about:
@@ -1488,5 +1488,5 @@ module:
           - 'build::npm'
     consistency:
       ../will.yml:
-        hash: e05420ead1795537c93fc010077b1215
-        size: 6580
+        hash: 151b1ff50509a58ca0158b822dfd135c
+        size: 6588
